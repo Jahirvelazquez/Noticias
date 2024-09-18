@@ -1,0 +1,121 @@
+/* Contenedor de medios */
+.media-container {
+    display: grid;
+    gap: 10px;
+    margin: 10px 0;
+}
+/* Estilo para imágenes dentro del contenedor de medios */
+.media {
+    width: 100%;
+    height: auto;
+    border-radius: 6px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    cursor: pointer;
+    object-fit: cover; /* Ajusta el tamaño de la imagen para cubrir el área del contenedor */
+}
+/* Ajustes del diseño basado en el número de archivos */
+.media-container-1 {
+    grid-template-columns: 1fr;
+}
+
+/* Estilo para el contenedor de medios */
+.media-container-2 {
+    display: grid;
+    grid-template-columns: 1fr 1fr; /* Dos columnas iguales */
+    gap: 0; /* Sin separación entre columnas */
+    margin: 10px 0;
+}
+
+/* Estilo para las imágenes dentro del contenedor de medios */
+.media-container-2 .media {
+    width: 100%;
+    height: 100%; /* Hace que la imagen ocupe todo el espacio disponible */
+    border-radius: 0; /* Sin bordes redondeados si quieres una apariencia más recta */
+    object-fit: cover; /* Ajusta la imagen para cubrir el contenedor sin distorsionarse */
+}
+
+
+/* Contenedor para 3 imágenes */
+.media-container-3 {
+    display: grid;
+    grid-template-columns: 1fr 1fr; /* Dos columnas iguales */
+    grid-template-rows: auto auto; /* Dos filas, una para la primera imagen y otra para las imágenes secundarias */
+    gap: 0; /* Sin espacio entre las imágenes */
+    width: 100%;
+}
+
+/* Estilo para la primera imagen */
+.media-container-3 .media-first {
+    grid-column: 1; /* Coloca la primera imagen en la primera columna */
+    grid-row: 1 / span 2; /* Ocupa la primera fila y parte de la segunda fila */
+    height: 300px; /* Altura fija, ajusta según necesidad */
+    width: 100%; /* Ancho completo de la columna */
+    border-radius: 0; /* Esquinas cuadradas */
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    object-fit: cover;
+    cursor: pointer;
+}
+
+/* Estilo para las imágenes secundarias */
+.media-container-3 .media-second,
+.media-container-3 .media-third {
+    width: 100%; /* Ancho completo de la columna */
+    height: 150px; /* Altura fija, ajusta según necesidad */
+    border-radius: 0; /* Esquinas cuadradas */
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    object-fit: cover;
+    cursor: pointer;
+}
+
+/* Coloca la segunda imagen en la primera fila y la tercera imagen en la segunda fila */
+.media-container-3 .media-second {
+    grid-column: 2; /* Coloca la segunda imagen en la segunda columna */
+    grid-row: 1; /* Coloca la segunda imagen en la primera fila */
+}
+
+.media-container-3 .media-third {
+    grid-column: 2; /* Coloca la tercera imagen en la segunda columna */
+    grid-row: 2; /* Coloca la tercera imagen en la segunda fila */
+}
+/* Contenedor para 4 imágenes */
+.media-container-4 {
+    display: grid;
+    grid-template-columns: 1fr 1fr; /* Dos columnas iguales */
+    grid-template-rows: 1fr 1fr; /* Dos filas iguales */
+    gap: 0; /* Sin espacio entre las imágenes */
+    width: 100%;
+}
+
+/* Estilo para todas las imágenes */
+.media-container-4 .media {
+    width: 100%; /* Ancho completo de la columna */
+    height: 100%; /* Altura completa de la fila */
+    border-radius: 0; /* Esquinas cuadradas */
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    object-fit: cover;
+    cursor: pointer;
+}
+
+/* Opcional: Si necesitas algún estilo específico para las imágenes en posiciones distintas */
+.media-container-4 .media:nth-of-type(1) {
+    grid-column: 1; /* Primera columna */
+    grid-row: 1; /* Primera fila */
+}
+
+.media-container-4 .media:nth-of-type(2) {
+    grid-column: 2; /* Segunda columna */
+    grid-row: 1; /* Primera fila */
+}
+
+.media-container-4 .media:nth-of-type(3) {
+    grid-column: 1; /* Primera columna */
+    grid-row: 2; /* Segunda fila */
+}
+
+.media-container-4 .media:nth-of-type(4) {
+    grid-column: 2; /* Segunda columna */
+    grid-row: 2; /* Segunda fila */
+}
+
+
+

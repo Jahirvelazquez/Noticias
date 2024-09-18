@@ -1,23 +1,29 @@
-import logo from './logo.svg';
-import './App.css';
+// src/App.js
+import React from "react";
+import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import Inicio from "./componentes/Inicio";
+import BarraNavegacion from "./componentes/BarraNavegacio";
+import Contacto from "./componentes/Contacto";
+import PiePagina from "./componentes/PiePagina";
+import 'mdb-react-ui-kit/dist/css/mdb.min.css';
+import Administrador from "./componentes/Administrador";
+import NewsDetail from "./componentes/NewsDetail";
+import Nacional from "./componentes/Nacional";
 
 function App() {
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+    <div>
+      <BrowserRouter>
+        <BarraNavegacion />
+        <Routes>
+          <Route path="/" element={<Inicio />} />
+          <Route path="/contacto" element={<Contacto />} />
+          <Route path="/administrador" element={<Administrador />} />
+          <Route path="/nacional" element={<Nacional />} />
+          <Route path="/news/:id" element={<NewsDetail />} />{/* Ruta para la noticia individual */}
+        </Routes>
+        <PiePagina />
+      </BrowserRouter>
     </div>
   );
 }
