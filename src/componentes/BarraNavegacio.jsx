@@ -36,7 +36,7 @@ const BarraNavegacion = () => {
                 <a class="nav-link" href="contacto" style={{ color: '#d6d6d6' }} ><strong>COAHUILA</strong></a>
               </li>
               <li class="nav-item">
-                <a class="nav-link" href="administrador" style={{ color: '#d6d6d6' }} ><strong>LA LAGUNA</strong></a>
+                <a class="nav-link" href="/" style={{ color: '#d6d6d6' }} ><strong>LA LAGUNA</strong></a>
               </li>
               <li class="nav-item">
                 <a class="nav-link" href="nacional" style={{ color: '#d6d6d6' }} ><strong>NACIONAL</strong></a>
