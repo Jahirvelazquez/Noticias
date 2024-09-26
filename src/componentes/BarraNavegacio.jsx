@@ -114,7 +114,7 @@ const BarraNavegacion = () => {
                     <a className="nav-link text-light" href="Parras">Parras</a>
                   </li>
                   <li className="nav-item">
-                    <a className="nav-link text-light" href="Fco.I.Madero">Fco.I.Madero</a>
+                    <a className="nav-link text-light" href="FcoIMadero">Fco.I.Madero</a>
                   </li>
                   <li className="nav-item">
                     <a className="nav-link text-light" href="Matamoros">Matamoros</a>
