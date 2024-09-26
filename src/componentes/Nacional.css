@@ -64,6 +64,8 @@
     display: flex;
     flex-direction: column;
     transition: transform 0.3s ease;
+    margin-left: 20px; /* Mover también las noticias a la derecha */
+
 }
 
 .news-item:hover {
@@ -116,7 +118,7 @@
     border: none;
     background-color: #f1f1f1;
     padding: 10px 15px;
-    margin: 0 5px;
+    margin: 0 2px;
     cursor: pointer;
     border-radius: 50%;
     transition: background-color 0.3s ease;
