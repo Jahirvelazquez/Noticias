@@ -1,4 +1,9 @@
 import React from "react";
+// Importa el CSS de MDBootstrap
+import 'mdb-react-ui-kit/dist/css/mdb.min.css';
+
+// Importa el CSS de FontAwesome
+import '@fortawesome/fontawesome-free/css/all.min.css';
 
 const PiePagina = () => {
     return (

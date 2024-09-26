@@ -4,28 +4,28 @@ import { ref, onValue } from 'firebase/database';
 import { Link } from 'react-router-dom';
 import './Categorias.css';
 
-const Nacional = () => {
-    const [nationalNews, setNationalNews] = useState([]);
+const FcoIMadero = () => {
+    const [fcoIMaderoNews, setFcoIMaderoNews] = useState([]);
     const [loading, setLoading] = useState(true);
     const [currentPage, setCurrentPage] = useState(1);
     const newsPerPage = 10; // Número de noticias por página
 
     useEffect(() => {
-        const nationalNewsRef = ref(database, 'news/');
-        onValue(nationalNewsRef, (snapshot) => {
+        const fcoIMaderoNewsRef = ref(database, 'news/');
+        onValue(fcoIMaderoNewsRef, (snapshot) => {
             const data = snapshot.val();
             const newsArray = data
                 ? Object.entries(data)
                     .map(([key, value]) => ({ id: key, ...value }))
-                    .filter((item) => item.category === 'NACIONAL')
+                    .filter((item) => item.category === 'FCO.I.MADERO')
                 : [];
-            setNationalNews(newsArray.sort((a, b) => new Date(b.dateTime) - new Date(a.dateTime)));
+            setFcoIMaderoNews(newsArray.sort((a, b) => new Date(b.dateTime) - new Date(a.dateTime)));
             setLoading(false);
         });
     }, []);
 
     // Calcular total de páginas
-    const totalPages = Math.ceil(nationalNews.length / newsPerPage);
+    const totalPages = Math.ceil(fcoIMaderoNews.length / newsPerPage);
 
     // Manejo de cambio de página
     const handleClick = (pageNumber) => {
@@ -36,7 +36,7 @@ const Nacional = () => {
     // Noticias a mostrar en la página actual
     const indexOfLastNews = currentPage * newsPerPage;
     const indexOfFirstNews = indexOfLastNews - newsPerPage;
-    const currentNews = nationalNews.slice(indexOfFirstNews, indexOfLastNews);
+    const currentNews = fcoIMaderoNews.slice(indexOfFirstNews, indexOfLastNews);
 
     if (loading) {
         return <div>Cargando...</div>;
@@ -47,7 +47,7 @@ const Nacional = () => {
             <div className="header-container">
                 <div className="header-content">
                     <div className="header-padding">
-                        <h1 className="header-title">CATEGORÍA: Nacional</h1>
+                        <h1 className="header-title">CATEGORÍA: Fco.I.Madero</h1>
                     </div>
                 </div>
             </div>
@@ -62,13 +62,13 @@ const Nacional = () => {
                         </p>
 
                         {item.fileUrls && item.fileUrls.length > 0 && (
-                            <img src={item.fileUrls[0]} alt="Nacional News" className="news-image" />
+                            <img src={item.fileUrls[0]} alt="Fco.I.Madero News" className="news-image" />
                         )}
 
                         {item.videoUrls && item.videoUrls.length > 0 && (
                             <iframe
                                 src={item.videoUrls[0]}
-                                title="Video de Noticia NACIONAL"
+                                title="Video de Noticia FCO.I.MADERO"
                                 allowFullScreen
                                 className="news-video"
                             />
@@ -127,4 +127,4 @@ const Nacional = () => {
     );
 };
 
-export default Nacional;
+export default FcoIMadero;
