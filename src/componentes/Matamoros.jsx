@@ -17,7 +17,7 @@ const Matamoros = () => {
             const newsArray = data
                 ? Object.entries(data)
                     .map(([key, value]) => ({ id: key, ...value }))
-                    .filter((item) => item.category === 'MATAMOROS')
+                    .filter((item) => item.category === 'Matamoros')
                 : [];
             setMatamorosNews(newsArray.sort((a, b) => new Date(b.dateTime) - new Date(a.dateTime)));
             setLoading(false);

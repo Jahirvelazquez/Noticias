@@ -17,7 +17,7 @@ const Parras = () => {
             const newsArray = data
                 ? Object.entries(data)
                     .map(([key, value]) => ({ id: key, ...value }))
-                    .filter((item) => item.category === 'PARRAS')
+                    .filter((item) => item.category === 'Parras')
                 : [];
             setParrasNews(newsArray.sort((a, b) => new Date(b.dateTime) - new Date(a.dateTime)));
             setLoading(false);

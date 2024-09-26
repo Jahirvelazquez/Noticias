@@ -78,7 +78,7 @@ const Administrador = () => {
             >
                 <option value="">Selecciona una categoría</option>
                 <option value="COAHUILA">COAHUILA</option>
-                <option value="lA lAGUNA">LA LAGUNA</option>
+                <option value="La Laguna">LA LAGUNA</option>
                 <option value="NACIONAL">NACIONAL</option>
                 <option value="San Pedro">San Pedro</option>
                 <option value="Parras">Parras</option>

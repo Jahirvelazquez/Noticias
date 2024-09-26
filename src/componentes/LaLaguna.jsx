@@ -17,7 +17,7 @@ const LaLaguna = () => {
             const newsArray = data
                 ? Object.entries(data)
                     .map(([key, value]) => ({ id: key, ...value }))
-                    .filter((item) => item.category === 'LA LAGUNA')
+                    .filter((item) => item.category === 'La Laguna')
                 : [];
             setLagunaNews(newsArray.sort((a, b) => new Date(b.dateTime) - new Date(a.dateTime)));
             setLoading(false);

@@ -17,7 +17,7 @@ const SanPedro = () => {
             const newsArray = data
                 ? Object.entries(data)
                     .map(([key, value]) => ({ id: key, ...value }))
-                    .filter((item) => item.category === 'SAN PEDRO')
+                    .filter((item) => item.category === 'San Pedro')
                 : [];
             setSanPedroNews(newsArray.sort((a, b) => new Date(b.dateTime) - new Date(a.dateTime)));
             setLoading(false);
