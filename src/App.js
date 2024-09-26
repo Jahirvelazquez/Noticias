@@ -15,6 +15,7 @@ import SanPedro from "./componentes/SanPedro";
 import Parras from "./componentes/Parras";
 import FcoIMadero from "./componentes/FcoIMadero";
 import Matamoros from "./componentes/Matamoros";
+import ResultadosBusqueda from './componentes/ResultadosBusqueda';
 
 function App() {
   return (
@@ -33,6 +34,7 @@ function App() {
           <Route path="/contacto" element={<Contacto />} />
           <Route path="/administrador" element={<Administrador />} />
           <Route path="/news/:id" element={<NewsDetail />} />{/* Ruta para la noticia individual */}
+          <Route path="/resultados" element={<ResultadosBusqueda />} />
         </Routes>
         <PiePagina />
       </BrowserRouter>

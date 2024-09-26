@@ -1,20 +1,18 @@
 import React, { useState, useEffect } from "react";
-import { FaSearch, FaHome } from 'react-icons/fa'; // Importa los iconos de búsqueda y home
+import { FaSearch, FaHome } from 'react-icons/fa';
+import { useNavigate } from 'react-router-dom';
 
 const BarraNavegacion = () => {
   const [showNavbar, setShowNavbar] = useState(true); 
   const [lastScrollY, setLastScrollY] = useState(0); 
   const [searchVisible, setSearchVisible] = useState(false); 
   const [searchValue, setSearchValue] = useState(""); 
+  const navigate = useNavigate(); 
 
   useEffect(() => {
     const handleScroll = () => {
       const currentScrollY = window.scrollY;
-      if (currentScrollY > lastScrollY) {
-        setShowNavbar(false); 
-      } else {
-        setShowNavbar(true);  
-      }
+      setShowNavbar(currentScrollY <= lastScrollY); 
       setLastScrollY(currentScrollY);
     };
 
@@ -27,6 +25,9 @@ const BarraNavegacion = () => {
 
   const toggleSearch = () => {
     setSearchVisible(!searchVisible);
+    if (!searchVisible) {
+      setSearchValue(""); // Limpiar el campo de búsqueda al abrir
+    }
   };
 
   const handleInputChange = (event) => {
@@ -37,6 +38,15 @@ const BarraNavegacion = () => {
     if (searchValue === "") {
       setSearchVisible(false);
     }
+  };
+
+  const handleSearchSubmit = (event) => {
+    event.preventDefault(); // Prevenir el comportamiento por defecto del formulario
+    if (searchValue.trim()) { // Solo buscar si hay texto
+      navigate(`/resultados?query=${encodeURIComponent(searchValue)}`); // Redirigir a la página de resultados
+    }
+    setSearchValue(""); // Limpiar el campo de búsqueda
+    setSearchVisible(false); // Ocultar el campo de búsqueda
   };
 
   return (
@@ -65,9 +75,7 @@ const BarraNavegacion = () => {
             <span className="navbar-toggler-icon"></span>
           </button>
 
-          {/* Contenedor para centrar el logo y el menú */}
           <div className="d-flex flex-column align-items-center mx-auto">
-            {/* Logo visible siempre */}
             <a className="navbar-brand" href="#">
               <img
                 style={{
@@ -79,15 +87,13 @@ const BarraNavegacion = () => {
               />
             </a>
 
-            {/* Menú colapsable */}
             <div className="collapse navbar-collapse mt-0" id="navbarContent">
               <div className="d-flex flex-column w-100 align-items-center">
                 <ul className="navbar-nav mb-0 text-center">
-                   {/* Ícono de Home visible */}
                   <li>
-                  <a href="/" className="text-light" style={{ fontSize: '24px', marginRight: '0px' }}>
-                   <FaHome />
-                  </a>
+                    <a href="/" className="text-light" style={{ fontSize: '24px', marginRight: '0px' }}>
+                      <FaHome />
+                    </a>
                   </li>
                   <li className="nav-item">
                     <a className="nav-link text-light" href="Coahuila"><strong>COAHUILA</strong></a>
@@ -127,22 +133,25 @@ const BarraNavegacion = () => {
                 }}
               >
                 {searchVisible ? (
-                  <input
-                    className="form-control"
-                    type="search"
-                    placeholder="Busque sus noticias"
-                    aria-label="Search"
-                    style={{
-                      borderRadius: '20px',
-                      padding: '5px 10px',
-                      fontSize: '14px',
-                      width: '250px',
-                    }}
-                    value={searchValue}
-                    onChange={handleInputChange}
-                    onBlur={handleBlur}
-                    autoFocus
-                  />
+                  <form onSubmit={handleSearchSubmit}>
+                    <input
+                      className="form-control"
+                      type="search"
+                      placeholder="Busque sus noticias"
+                      aria-label="Search"
+                      style={{
+                        borderRadius: '20px',
+                        padding: '5px 10px',
+                        fontSize: '14px',
+                        width: '250px',
+                      }}
+                      value={searchValue}
+                      onChange={handleInputChange}
+                      onBlur={handleBlur}
+                      onFocus={() => setSearchVisible(true)}
+                      autoFocus
+                    />
+                  </form>
                 ) : (
                   <FaSearch
                     onClick={toggleSearch}
