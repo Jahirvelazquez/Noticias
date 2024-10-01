@@ -16,6 +16,8 @@ import Parras from "./componentes/Parras";
 import FcoIMadero from "./componentes/FcoIMadero";
 import Matamoros from "./componentes/Matamoros";
 import ResultadosBusqueda from './componentes/ResultadosBusqueda';
+import Noticias from "./componentes/Noticias";
+import Login from "./componentes/Login";
 
 function App() {
   return (
@@ -24,6 +26,7 @@ function App() {
         <BarraNavegacion />
         <Routes>
           <Route path="/" element={<Inicio />} />
+          <Route path="/Noticias" element={<Noticias />} />
           <Route path="/Coahuila" element={<Coahuila />} />
           <Route path="/Laguna" element={<LaLaguna />} />
           <Route path="/Nacional" element={<Nacional />} />
@@ -31,10 +34,11 @@ function App() {
           <Route path="/Parras" element={<Parras />} />
           <Route path="/FcoIMadero" element={<FcoIMadero />} />
           <Route path="/Matamoros" element={<Matamoros />} />
-          <Route path="/contacto" element={<Contacto />} />
+          <Route path="/Contacto" element={<Contacto />} />
           <Route path="/administrador" element={<Administrador />} />
           <Route path="/news/:id" element={<NewsDetail />} />{/* Ruta para la noticia individual */}
           <Route path="/resultados" element={<ResultadosBusqueda />} />
+          <Route path="/Login" element={<Login />} />
         </Routes>
         <PiePagina />
       </BrowserRouter>

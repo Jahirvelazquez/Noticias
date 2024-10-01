@@ -1,16 +1,19 @@
 // src/componentes/Inicio.js
 import React from 'react';
-import SlideShow from './Slideshow';
-import NewsFeed from './NewsFeed ';
+import Carrusel from './Inicio/Carrusel';
+import LatestArticles from './Inicio/LatestArticles';
+import BlogBlockIntroPage from './Inicio/BlogBlockIntroPage';
+import BlogBanner from './Inicio/BlogBanner ';
 
 const Inicio = () => {
  
 
   return (
     <div>
-      <SlideShow></SlideShow>,
-      <NewsFeed></NewsFeed>
-
+      <Carrusel></Carrusel>
+      <LatestArticles></LatestArticles>
+      <BlogBanner></BlogBanner>
+      <BlogBlockIntroPage></BlogBlockIntroPage>
     </div>
   );
 };

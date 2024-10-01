@@ -1,0 +1,10 @@
+@media (max-width: 991px) {
+    .navbar-collapse.collapse {
+      transform: translateX(100%); /* Oculto fuera de la vista (a la derecha) */
+    }
+  
+    .navbar-collapse.collapse.show {
+      transform: translateX(0); /* Mostrar cuando se despliega */
+    }
+  }
+  

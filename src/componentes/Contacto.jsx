@@ -1,79 +1,80 @@
 import React from 'react';
+import {
+  MDBContainer,
+  MDBRow,
+  MDBCol,
+  MDBIcon,
+  MDBCheckbox,
+  MDBInput,
+  MDBBtn,
+  MDBTextArea,
+} from 'mdb-react-ui-kit';
 
 const Contacto = () => {
   return (
-    <div style={styles.container}>
-      <h2 style={styles.heading}>Contact Us</h2>
-      <form style={styles.form}>
-        <div style={styles.formGroup}>
-          <label style={styles.label} htmlFor="name">Name:</label>
-          <input type="text" id="name" name="name" style={styles.input} />
+    <MDBContainer fluid className='mt-5'>
+    <section className='text-center'>
+      <div
+        className='p-5 bg-image'
+        style={{ backgroundImage: "url('https://mdbootstrap.com/img/new/textures/full/171.jpg')", height: '300px' }}
+      ></div>
+
+      <div
+        className='card mx-4 mx-md-5 shadow-5-strong'
+        style={{ marginTop: '-100px', background: 'hsla(0, 0%, 100%, 0.8)', backdropFilter: 'blur(30px)' }}
+      >
+        <div className='card-body py-5 px-md-5'>
+          <MDBRow className='mb-5'>
+            <MDBCol lg='3' md='6' className='mb-5 mb-lg-0 position-relative'>
+              <MDBIcon icon='globe-americas' size='3x' className='text-primary mb-4' />
+              <h6 className='fw-normal mb-0'>Unites States</h6>
+              <div className='vr vr-blurry position-absolute my-0 h-100 d-none d-md-block top-0 end-0'></div>
+            </MDBCol>
+
+            <MDBCol lg='3' md='6' className='mb-5 mb-lg-0 position-relative'>
+              <MDBIcon icon='map-marker-alt' size='3x' className='text-primary mb-4' />
+              <h6 className='fw-normal mb-0'>New York, 94126</h6>
+              <div className='vr vr-blurry position-absolute my-0 h-100 d-none d-md-block top-0 end-0'></div>
+            </MDBCol>
+
+            <MDBCol lg='3' md='6' className='mb-4 mb-lg-0 position-relative'>
+              <MDBIcon icon='phone' size='3x' className='text-primary mb-4' />
+              <h6 className='fw-normal mb-0'>+ 01 234 567 89</h6>
+              <div className='vr vr-blurry position-absolute my-0 h-100 d-none d-md-block top-0 end-0'></div>
+            </MDBCol>
+
+            <MDBCol lg='3' md='6' className='mb-4 mb-lg-0 position-relative'>
+              <MDBIcon icon='hand-holding-usd' size='3x' className='text-primary mb-4' />
+              <h6 className='fw-normal mb-0'>Tax ID: 273 384</h6>
+            </MDBCol>
+          </MDBRow>
+
+          <MDBRow class='d-flex justify-content-center'>
+            <MDBCol lg='6' class='col-lg-6'>
+              <form>
+                <MDBInput className='mb-4' id='password2' label='Name' />
+                <MDBInput className='mb-4' type='email' id='email2' label='Email address' />
+                <MDBTextArea label='Message' rows={4} className='mb-4' />
+
+                <MDBRow className='mb-4 justify-content-center'>
+                  <MDBCol md='6' className='d-flex justify-content-center'>
+                    <MDBCheckbox className=' mb-3 mb-md-0' defaultChecked label=' Send me a copy of this message' />
+                  </MDBCol>
+                </MDBRow>
+
+                <MDBBtn type='submit' block className='mb-4'>
+                  Send
+                </MDBBtn>
+              </form>
+            </MDBCol>
+          </MDBRow>
         </div>
-        <div style={styles.formGroup}>
-          <label style={styles.label} htmlFor="email">Email:</label>
-          <input type="email" id="email" name="email" style={styles.input} />
-        </div>
-        <div style={styles.formGroup}>
-          <label style={styles.label} htmlFor="message">Message:</label>
-          <textarea id="message" name="message" style={styles.textarea} rows="5"></textarea>
-        </div>
-        <button type="submit" style={styles.button}>Send Message</button>
-        
-      </form>
-    </div>
+      </div>
+    </section>
+  </MDBContainer>
   );
 };
 
-const styles = {
-  container: {
-    maxWidth: '600px',
-    margin: '0 auto',
-    padding: '20px',
-    backgroundColor: '#f9f9f9',
-    borderRadius: '8px',
-    boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)',
-  },
-  heading: {
-    fontSize: '24px',
-    marginBottom: '20px',
-    color: '#333',
-  },
-  form: {
-    display: 'flex',
-    flexDirection: 'column',
-  },
-  formGroup: {
-    marginBottom: '15px',
-  },
-  label: {
-    marginBottom: '5px',
-    fontSize: '16px',
-    color: '#555',
-  },
-  input: {
-    padding: '10px',
-    fontSize: '16px',
-    borderRadius: '4px',
-    border: '1px solid #ddd',
-    width: '100%',
-  },
-  textarea: {
-    padding: '10px',
-    fontSize: '16px',
-    borderRadius: '4px',
-    border: '1px solid #ddd',
-    width: '100%',
-    resize: 'vertical',
-  },
-  button: {
-    padding: '10px 15px',
-    fontSize: '16px',
-    color: '#fff',
-    backgroundColor: '#007bff',
-    border: 'none',
-    borderRadius: '4px',
-    cursor: 'pointer',
-  }
-};
+
 
 export default Contacto;

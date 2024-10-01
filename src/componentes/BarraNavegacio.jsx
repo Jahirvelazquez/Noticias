@@ -1,27 +1,12 @@
 import React, { useState, useEffect } from "react";
 import { FaSearch, FaHome } from 'react-icons/fa';
 import { useNavigate } from 'react-router-dom';
+import './navbar.css';
 
 const BarraNavegacion = () => {
-  const [showNavbar, setShowNavbar] = useState(true); 
-  const [lastScrollY, setLastScrollY] = useState(0); 
   const [searchVisible, setSearchVisible] = useState(false); 
   const [searchValue, setSearchValue] = useState(""); 
   const navigate = useNavigate(); 
-
-  useEffect(() => {
-    const handleScroll = () => {
-      const currentScrollY = window.scrollY;
-      setShowNavbar(currentScrollY <= lastScrollY); 
-      setLastScrollY(currentScrollY);
-    };
-
-    window.addEventListener("scroll", handleScroll);
-
-    return () => {
-      window.removeEventListener("scroll", handleScroll);
-    };
-  }, [lastScrollY]);
 
   const toggleSearch = () => {
     setSearchVisible(!searchVisible);
@@ -50,14 +35,13 @@ const BarraNavegacion = () => {
   };
 
   return (
-   <div style={{ paddingTop: '280px' }}>
+   <div>
       <nav
-        className={`navbar navbar-expand-lg fixed-top ${showNavbar ? 'show' : 'hide'}`}
+        className={`navbar navbar-expand-lg`}
         style={{
           background: 'linear-gradient(135deg, #2549a4, #1e3a7b)',
           boxShadow: '0 4px 8px rgba(0, 0, 0, 0.2)',
           transition: 'transform 0.3s ease-in-out',
-          transform: showNavbar ? 'translateY(0)' : 'translateY(-100%)',
           borderBottom: '4px solid #1c2a6b',
         }}
       >
@@ -76,7 +60,7 @@ const BarraNavegacion = () => {
           </button>
 
           <div className="d-flex flex-column align-items-center mx-auto">
-            <a className="navbar-brand" href="#">
+            <a className="navbar-brand" href="/">
               <img
                 style={{
                   width: '170px',
@@ -94,6 +78,9 @@ const BarraNavegacion = () => {
                     <a href="/" className="text-light" style={{ fontSize: '24px', marginRight: '0px' }}>
                       <FaHome />
                     </a>
+                  </li>
+                  <li className="nav-item">
+                    <a className="nav-link text-light" href="Noticias"><strong>NOTICIAS</strong></a>
                   </li>
                   <li className="nav-item">
                     <a className="nav-link text-light" href="Coahuila"><strong>COAHUILA</strong></a>
@@ -118,6 +105,9 @@ const BarraNavegacion = () => {
                   </li>
                   <li className="nav-item">
                     <a className="nav-link text-light" href="Matamoros">Matamoros</a>
+                  </li>
+                  <li className="nav-item">
+                    <a className="nav-link text-light" href="Contacto">Contacto</a>
                   </li>
                 </ul>
               </div>
