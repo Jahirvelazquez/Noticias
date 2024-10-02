@@ -4,6 +4,9 @@ import Carrusel from './Inicio/Carrusel';
 import LatestArticles from './Inicio/LatestArticles';
 import BlogBlockIntroPage from './Inicio/BlogBlockIntroPage';
 import BlogBanner from './Inicio/BlogBanner ';
+import MostPopular from './Inicio/MostPopular ';
+import Categories from './Inicio/Categories ';
+import CardVideo from './Inicio/CardVideo';
 
 const Inicio = () => {
  
@@ -13,7 +16,12 @@ const Inicio = () => {
       <Carrusel></Carrusel>
       <LatestArticles></LatestArticles>
       <BlogBanner></BlogBanner>
+      <CardVideo></CardVideo>
+      <Categories></Categories>
+      <MostPopular></MostPopular>
       <BlogBlockIntroPage></BlogBlockIntroPage>
+     
+      
     </div>
   );
 };
