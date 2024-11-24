@@ -7,6 +7,7 @@ import BlogBanner from './Inicio/BlogBanner ';
 import MostPopular from './Inicio/MostPopular ';
 import Categories from './Inicio/Categories ';
 import CardVideo from './Inicio/CardVideo';
+import NewsDashboard from './Inicio/NewsDashboard';
 
 const Inicio = () => {
  
@@ -20,7 +21,7 @@ const Inicio = () => {
       <Categories></Categories>
       <MostPopular></MostPopular>
       <BlogBlockIntroPage></BlogBlockIntroPage>
-     
+      <NewsDashboard></NewsDashboard>
       
     </div>
   );

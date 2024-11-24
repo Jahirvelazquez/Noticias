@@ -18,6 +18,7 @@ import Matamoros from "./componentes/Matamoros";
 import ResultadosBusqueda from './componentes/ResultadosBusqueda';
 import Noticias from "./componentes/Noticias";
 import Login from "./componentes/Login";
+import NewsDashboard from "./componentes/Inicio/NewsDashboard";
 
 function App() {
   return (
@@ -39,6 +40,7 @@ function App() {
           <Route path="/news/:id" element={<NewsDetail />} />{/* Ruta para la noticia individual */}
           <Route path="/resultados" element={<ResultadosBusqueda />} />
           <Route path="/Login" element={<Login />} />
+          <Route path="/Login" element={<NewsDashboard />} />
         </Routes>
         <PiePagina />
       </BrowserRouter>

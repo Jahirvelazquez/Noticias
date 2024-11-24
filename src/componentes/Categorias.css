@@ -50,107 +50,46 @@
 }
 
 /* ////////////////////////////////////////// */
-
-/* Estilo base para el contenedor de noticias */
-.news-item {
-    border: 1px solid #e5e7eb;
-    /* gris claro */
-    border-radius: 8px;
-    padding: 16px;
-    margin-bottom: 16px;
-    background-color: #fff;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-    overflow: hidden;
-    display: flex;
-    flex-direction: column;
-    transition: transform 0.3s ease;
-    margin-left: 20px; /* Mover también las noticias a la derecha */
-
-}
-
-.news-item:hover {
-    transform: scale(1.02);
-}
-
-/* Estilo para el título de la noticia */
-.news-title {
-    font-size: 1.5rem;
-    font-weight: bold;
-    color: #1f2937;
-    /* gris oscuro */
-    margin-bottom: 8px;
-}
-
-/* Estilo para la fecha de la noticia */
-.news-date {
-    font-size: 0.875rem;
-    color: #6b7280;
-    /* gris */
-    margin-bottom: 12px;
-}
-
-/* Estilo para la imagen de la noticia */
-.news-image {
-    width: 100%;
-    height: auto;
-    max-height: 400px;
-    object-fit: cover;
-    border-radius: 8px;
-    margin-bottom: 12px;
-}
-
-/* Estilo para el video de la noticia */
-.news-video {
-    width: 100%;
-    height: 300px;
-    border-radius: 8px;
-    margin-bottom: 12px;
-}
-/*///////////////////////////////////////*/
+/* noticia responsiva */
+.news-card {
+    width: 60%;
+    margin-left: 20px; /* Ajustar margen a la izquierda */
+  }
+  
+  .news-card .card-title,
+  .news-card .card-text {
+    text-align: justify; /* Justificar texto */
+  }
+  
+  /* Estilos responsivos */
+  @media (max-width: 768px) {
+    .news-card {
+      width: 90%; /* Aumentar el ancho en pantallas más pequeñas */
+      margin-left: auto; /* Centrar el contenedor */
+      margin-right: auto; /* Centrar el contenedor */
+    }
+  }
+  
+  @media (max-width: 576px) {
+    .news-card {
+      width: 100%; /* Ocupa todo el ancho en dispositivos muy pequeños */
+      margin-left: 0; /* Sin margen en dispositivos muy pequeños */
+    }
+  
+    .news-card .card-title {
+      font-size: 1.2rem; /* Ajustar tamaño de fuente para el título */
+    }
+  
+    .news-card .card-text {
+      font-size: 1rem; /* Ajustar tamaño de fuente para la descripción */
+    }
+  }
+  
 /*paginado*/
 .pagination {
     display: flex;
     justify-content: center;
     margin-top: 20px;
-}
-
-.page-button {
-    border: none;
-    background-color: #f1f1f1;
-    padding: 10px 15px;
-    margin: 0 2px;
-    cursor: pointer;
-    border-radius: 50%;
-    transition: background-color 0.3s ease;
-}
-
-.page-button:hover {
-    background-color: #ddd;
-}
-
-.page-button.active {
-    background-color: #007bff;
-    color: white;
-}
-
-.first-last-button {
-    border-radius: 50%;
-    padding: 10px 15px;
-}
-
-.page-button:disabled {
-    cursor: not-allowed;
-    background-color: #e9ecef;
-}
-
-@media screen and (max-width: 600px) {
-    .page-button {
-        padding: 8px 12px;
-    }
-
-    .first-last-button {
-        padding: 8px 15px;
-    }
 }
 
 /*///////////////////////////////////////*/
