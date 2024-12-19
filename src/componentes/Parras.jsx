@@ -15,7 +15,7 @@ import {
 } from 'mdb-react-ui-kit';
 import './Categorias.css';
 
-const Nacional = () => {
+const Parras = () => {
   const [nationalNews, setNationalNews] = useState([]);
   const [loading, setLoading] = useState(true);
   const [currentPage, setCurrentPage] = useState(1);
@@ -171,4 +171,4 @@ const Nacional = () => {
   );
 };
 
-export default Nacional;
+export default Parras;

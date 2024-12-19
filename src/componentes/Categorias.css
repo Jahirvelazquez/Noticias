@@ -92,28 +92,5 @@
     margin-top: 20px;
 }
 
-/*///////////////////////////////////////*/
-/* Responsividad para pantallas más pequeñas */
-@media (max-width: 768px) {
-    .news-item {
-        padding: 12px;
-    }
-
-    .news-title {
-        font-size: 1.25rem;
-    }
-
-    .news-date {
-        font-size: 0.75rem;
-    }
-
-    .news-video {
-        height: 200px;
-    }
-
-    .news-image {
-        max-height: 300px;
-    }
-}
 
 

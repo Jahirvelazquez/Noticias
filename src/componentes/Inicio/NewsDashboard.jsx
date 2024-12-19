@@ -23,7 +23,7 @@ const NewsDashboard = () => {
         <MDBCol md="12">
           <MDBCard className="text-center">
             <MDBCardImage
-              src="https://via.placeholder.com/1200x400"
+              src="https://mdbcdn.b-cdn.net/img/Photos/Slides/img%20(16).jpg"
               alt="Featured news"
               position="top"
             />
@@ -49,7 +49,7 @@ const NewsDashboard = () => {
         <MDBCol md="4">
           <MDBCard className="mb-4">
             <MDBCardImage
-              src="https://via.placeholder.com/350x200"
+              src="https://mdbcdn.b-cdn.net/img/Photos/Slides/img%20(16).jpg"
               alt="News"
               position="top"
             />
@@ -71,7 +71,7 @@ const NewsDashboard = () => {
         <MDBCol md="4">
           <MDBCard className="mb-4">
             <MDBCardImage
-              src="https://via.placeholder.com/350x200"
+              src="https://mdbcdn.b-cdn.net/img/Photos/Slides/img%20(16).jpg"
               alt="News"
               position="top"
             />
@@ -93,7 +93,7 @@ const NewsDashboard = () => {
         <MDBCol md="4">
           <MDBCard className="mb-4">
             <MDBCardImage
-              src="https://via.placeholder.com/350x200"
+              src="https://mdbcdn.b-cdn.net/img/Photos/Slides/img%20(16).jpg"
               alt="News"
               position="top"
             />
@@ -121,7 +121,7 @@ const NewsDashboard = () => {
               <MDBCol md="4" key={index} className="mb-4">
                 <MDBCard className="d-flex flex-row align-items-center">
                   <MDBCardImage
-                    src="https://via.placeholder.com/100x100"
+                    src="https://mdbcdn.b-cdn.net/img/Photos/Slides/img%20(16).jpg"
                     alt="Thumbnail"
                     style={{ width: "100px", height: "100px" }}
                   />
