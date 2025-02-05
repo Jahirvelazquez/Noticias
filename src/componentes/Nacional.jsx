@@ -71,38 +71,39 @@ const Nacional = () => {
         <MDBRow className='g-0'>
           {/* Contenedor Simétrico para Imagen o Video */}
           <MDBCol md='5' className="d-flex align-items-center justify-content-center" style={{ height: '300px', padding: 0 }}>
-            {item.fileUrls && item.fileUrls.length > 0 && (
-              <MDBCardImage
-                src={item.fileUrls[0]} // Asegúrate de que esta URL sea válida
-                alt="Imagen noticia"
-                fluid
-                className='rounded-start'
-                style={{
-                  height: '100%', // Asegurar que la imagen ocupe toda la altura del contenedor
-                  width: '100%', // Asegurar que la imagen ocupe todo el ancho del contenedor
-                  objectFit: 'cover', // Mantener la proporción
-                  padding: 0, // Eliminar padding de la imagen
-                  margin: 0, // Eliminar margen de la imagen
-                }}
-              />
-            )}
-            {item.videoUrls && item.videoUrls.length > 0 && (
-              <iframe
-                src={item.videoUrls[0].replace('watch?v=', 'embed/')} // Cambiar la URL para incrustar
-                title="Video de Noticia NACIONAL"
-                allowFullScreen
-                width="100%" // Ajustar el ancho
-                height="100%" // Ajustar la altura para que se vea bien
-                className="rounded-start"
-                style={{
-                  border: 'none',
-                  height: '100%',
-                  width: '100%',
-                  objectFit: 'cover', // Asegura que el video ocupe todo el espacio
-                }}
-              />
-            )}
-          </MDBCol>
+  {/* Mostrar solo una imagen o un video */}
+  {item.fileUrls && item.fileUrls.length > 0 ? (
+    <MDBCardImage
+      src={item.fileUrls[0]} // Asegúrate de que esta URL sea válida
+      alt="Imagen noticia"
+      fluid
+      className='rounded-start'
+      style={{
+        height: '100%', // Asegurar que la imagen ocupe toda la altura del contenedor
+        width: '100%', // Asegurar que la imagen ocupe todo el ancho del contenedor
+        objectFit: 'cover', // Mantener la proporción
+        padding: 0, // Eliminar padding de la imagen
+        margin: 0, // Eliminar margen de la imagen
+      }}
+    />
+  ) : item.videoUrls && item.videoUrls.length > 0 ? (
+    <iframe
+      src={item.videoUrls[0].replace('watch?v=', 'embed/')} // Cambiar la URL para incrustar
+      title="Video de Noticia NACIONAL"
+      allowFullScreen
+      width="100%" // Ajustar el ancho
+      height="100%" // Ajustar la altura para que se vea bien
+      className="rounded-start"
+      style={{
+        border: 'none',
+        height: '100%',
+        width: '100%',
+        objectFit: 'cover', // Asegura que el video ocupe todo el espacio
+      }}
+    />
+  ) : null}
+</MDBCol>
+
 
           {/* Contenido */}
           <MDBCol md='7'> {/* Aumentar a 7 para balancear el espacio */}

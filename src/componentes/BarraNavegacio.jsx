@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { FaSearch, FaHome } from 'react-icons/fa';
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom'; // Importar Link de react-router-dom
 import './navbar.css';
 
 const BarraNavegacion = () => {
@@ -60,7 +60,7 @@ const BarraNavegacion = () => {
           </button>
 
           <div className="d-flex flex-column align-items-center mx-auto">
-            <a className="navbar-brand" href="/">
+            <Link to="/" className="navbar-brand">
               <img
                 style={{
                   width: '170px',
@@ -69,45 +69,45 @@ const BarraNavegacion = () => {
                 src="https://firebasestorage.googleapis.com/v0/b/imagenes-37984.appspot.com/o/logonoticias.jpg?alt=media&token=8cc7eddf-dbe9-4e2b-83a1-8504b977f3da"
                 alt="Logo"
               />
-            </a>
+            </Link>
 
             <div className="collapse navbar-collapse mt-0" id="navbarContent">
               <div className="d-flex flex-column w-100 align-items-center">
                 <ul className="navbar-nav mb-0 text-center">
                   <li>
-                    <a href="/" className="text-light" style={{ fontSize: '24px', marginRight: '0px' }}>
+                    <Link to="/" className="text-light" style={{ fontSize: '24px', marginRight: '0px' }}>
                       <FaHome />
-                    </a>
+                    </Link>
                   </li>
                   <li className="nav-item">
-                    <a className="nav-link text-light" href="Noticias"><strong>NOTICIAS</strong></a>
+                    <Link to="/Noticias" className="nav-link text-light"><strong>NOTICIAS</strong></Link>
                   </li>
                   <li className="nav-item">
-                    <a className="nav-link text-light" href="Coahuila"><strong>COAHUILA</strong></a>
+                    <Link to="/Coahuila" className="nav-link text-light"><strong>COAHUILA</strong></Link>
                   </li>
                   <li className="nav-item">
-                    <a className="nav-link text-light" href="Laguna"><strong>LA LAGUNA</strong></a>
+                    <Link to="/Laguna" className="nav-link text-light"><strong>LA LAGUNA</strong></Link>
                   </li>
                   <li className="nav-item">
-                    <a className="nav-link text-light" href="Nacional"><strong>NACIONAL</strong></a>
+                    <Link to="/Nacional" className="nav-link text-light"><strong>NACIONAL</strong></Link>
                   </li>
                 </ul>
 
                 <ul className="navbar-nav text-center">
                   <li className="nav-item">
-                    <a className="nav-link text-light" href="San pedro">San Pedro</a>
+                    <Link to="/San-pedro" className="nav-link text-light">San Pedro</Link>
                   </li>
                   <li className="nav-item">
-                    <a className="nav-link text-light" href="Parras">Parras</a>
+                    <Link to="/Parras" className="nav-link text-light">Parras</Link>
                   </li>
                   <li className="nav-item">
-                    <a className="nav-link text-light" href="FcoIMadero">Fco.I.Madero</a>
+                    <Link to="/FcoIMadero" className="nav-link text-light">Fco.I.Madero</Link>
                   </li>
                   <li className="nav-item">
-                    <a className="nav-link text-light" href="Matamoros">Matamoros</a>
+                    <Link to="/Matamoros" className="nav-link text-light">Matamoros</Link>
                   </li>
                   <li className="nav-item">
-                    <a className="nav-link text-light" href="Contacto">Contacto</a>
+                    <Link to="/Contacto" className="nav-link text-light">Contacto</Link>
                   </li>
                 </ul>
               </div>

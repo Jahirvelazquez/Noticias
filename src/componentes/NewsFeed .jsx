@@ -1,18 +1,12 @@
 import React, { useEffect, useState } from 'react';
 import { database } from '../firebaseConfig';
 import { ref, onValue } from 'firebase/database';
-import Modal from 'react-modal';
 import './NewsFeed.css';
 import './Imagenes.css';
 import { FaShareAlt } from 'react-icons/fa'; // Import the share icon from react-icons
 
 const NewsFeed = () => {
     const [news, setNews] = useState([]);
-    const [modalIsOpen, setModalIsOpen] = useState(false);
-    const [selectedFileUrl, setSelectedFileUrl] = useState(null);
-    const [isVideo, setIsVideo] = useState(false);
-    const [currentIndex, setCurrentIndex] = useState(0);
-    const [currentFiles, setCurrentFiles] = useState([]);
     const [expandedIndex, setExpandedIndex] = useState(null);
     const [loading, setLoading] = useState(true); // State to manage loading
 
@@ -48,39 +42,6 @@ const NewsFeed = () => {
             return link;
         }
         return null;
-    };
-
-    const openModal = (fileUrls = [], videoUrls = [], index) => {
-        const combinedFiles = [
-            ...(fileUrls || []),
-            ...(videoUrls || []).map(url => getEmbedUrl(url))
-        ];
-        setCurrentFiles(combinedFiles);
-        setCurrentIndex(index);
-        setSelectedFileUrl(combinedFiles[index]);
-        setIsVideo(combinedFiles[index]?.includes('youtube.com') || combinedFiles[index]?.includes('facebook.com') || combinedFiles[index]?.includes('drive.google.com'));
-        setModalIsOpen(true);
-    };
-
-    const closeModal = () => {
-        setModalIsOpen(false);
-        setSelectedFileUrl(null);
-        setCurrentFiles([]);
-        setCurrentIndex(0);
-    };
-
-    const showNext = () => {
-        const nextIndex = (currentIndex + 1) % currentFiles.length;
-        setCurrentIndex(nextIndex);
-        setSelectedFileUrl(currentFiles[nextIndex]);
-        setIsVideo(currentFiles[nextIndex]?.includes('youtube.com') || currentFiles[nextIndex]?.includes('facebook.com') || currentFiles[nextIndex]?.includes('drive.google.com'));
-    };
-
-    const showPrevious = () => {
-        const prevIndex = (currentIndex - 1 + currentFiles.length) % currentFiles.length;
-        setCurrentIndex(prevIndex);
-        setSelectedFileUrl(currentFiles[prevIndex]);
-        setIsVideo(currentFiles[prevIndex]?.includes('youtube.com') || currentFiles[prevIndex]?.includes('facebook.com') || currentFiles[prevIndex]?.includes('drive.google.com'));
     };
 
     const truncateContent = (content, maxWords) => {
@@ -154,7 +115,6 @@ const NewsFeed = () => {
                                         title={`Media Video ${idx}`}
                                         className={`iframe ${allFiles.length === 1 ? 'single-video' : ''}`}
                                         allowFullScreen
-                                        onClick={() => openModal(item.fileUrls, item.videoUrls, idx)}
                                     />
                                 ) : (
                                     <img
@@ -162,17 +122,15 @@ const NewsFeed = () => {
                                         src={fileUrl}
                                         alt="News"
                                         className={`media ${allFiles.length === 3 ? (idx === 0 ? 'media-first' : (idx === 1 ? 'media-second' : 'media-third')) : ''}`}
-                                        onClick={() => openModal(item.fileUrls, item.videoUrls, idx)}
                                     />
                                 )
                             ))}
                             {allFiles.length > 4 && (
-                                <div className="more-images" onClick={() => openModal(item.fileUrls, item.videoUrls, 4)}>
+                                <div className="more-images">
                                     +{allFiles.length - 4} más
                                 </div>
                             )}
                         </div>
-
 
                         <p className="date">{item.dateTime ? new Date(item.dateTime).toLocaleString() : 'Fecha no disponible'}</p>
                         <p className="category">{item.category}</p>
@@ -183,50 +141,8 @@ const NewsFeed = () => {
                     </div>
                 );
             })}
-            <Modal
-                isOpen={modalIsOpen}
-                onRequestClose={closeModal}
-                style={modalStyle}
-                contentLabel="Media Modal"
-            >
-                <div className="modal-content">
-                    {isVideo ? (
-                        <iframe
-                            src={selectedFileUrl}
-                            title="Selected Video"  // Asegúrate de que el título sea adecuado
-                            className="modal-video"
-                            allowFullScreen
-                        />
-                    ) : (
-                        <img src={selectedFileUrl} alt="News" className="modal-image" />
-                    )}
-                    <div className="modal-controls">
-                        <button onClick={showPrevious} className="control-button">&lt;&lt;</button>
-                        <button onClick={showNext} className="control-button">&gt;&gt;</button>
-                    </div>
-                    <button onClick={closeModal} className="close-button">&times;</button>
-                </div>
-            </Modal>
         </div>
     );
-};
-
-const modalStyle = {
-    content: {
-        top: '50%',
-        left: '50%',
-        right: 'auto',
-        bottom: 'auto',
-        marginRight: '-50%',
-        transform: 'translate(-50%, -50%)',
-        padding: '0',
-        border: 'none',
-        borderRadius: '12px',
-        boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)',
-    },
-    overlay: {
-        backgroundColor: 'rgba(0, 0, 0, 0.8)',
-    },
 };
 
 export default NewsFeed;
