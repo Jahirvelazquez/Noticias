@@ -1,6 +1,6 @@
 // src/App.js
 import React from "react";
-import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import { BrowserRouter, Routes, Route, Router } from 'react-router-dom';
 import Inicio from "./componentes/Inicio";
 import BarraNavegacion from "./componentes/BarraNavegacio";
 import Contacto from "./componentes/Contacto";
@@ -19,6 +19,9 @@ import ResultadosBusqueda from './componentes/ResultadosBusqueda';
 import Noticias from "./componentes/Noticias";
 import Login from "./componentes/Login";
 import NewsDashboard from "./componentes/Inicio/NewsDashboard";
+import SubirNoticia from "./componentes/SubirNoticia";
+import AdminPublicidad from "./componentes/AdminPublicidad";
+import AdminCarrusel from "./componentes/AdminCarrusel";
 
 function App() {
   return (
@@ -36,11 +39,14 @@ function App() {
           <Route path="/FcoIMadero" element={<FcoIMadero />} />
           <Route path="/Matamoros" element={<Matamoros />} />
           <Route path="/Contacto" element={<Contacto />} />
-          <Route path="/administrador" element={<Administrador />} />
           <Route path="/news/:id" element={<NewsDetail />} />{/* Ruta para la noticia individual */}
+          <Route path="/administrador" element={<Administrador />} />
           <Route path="/resultados" element={<ResultadosBusqueda />} />
+          <Route path="/SubirNoticia" element={<SubirNoticia />} />
           <Route path="/Login" element={<Login />} />
           <Route path="/Login" element={<NewsDashboard />} />
+          <Route path="/admin/publicidad" element={<AdminPublicidad />} />
+          <Route path="/admin/carrusel" element={<AdminCarrusel />} />
         </Routes>
         <PiePagina />
       </BrowserRouter>

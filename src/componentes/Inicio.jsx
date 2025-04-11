@@ -1,13 +1,14 @@
 // src/componentes/Inicio.js
 import React from 'react';
-import Carrusel from './Inicio/Carrusel';
+import Carrusel from './Carrusel';
 import LatestArticles from './Inicio/LatestArticles';
-import BlogBlockIntroPage from './Inicio/BlogBlockIntroPage';
-import BlogBanner from './Inicio/BlogBanner ';
 import MostPopular from './Inicio/MostPopular ';
 import Categories from './Inicio/Categories ';
 import CardVideo from './Inicio/CardVideo';
 import NewsDashboard from './Inicio/NewsDashboard';
+import Publicidad from './Inicio/Publicidad';
+import Cards from './Inicio/Cards';
+
 
 const Inicio = () => {
  
@@ -16,11 +17,11 @@ const Inicio = () => {
     <div>
       <Carrusel></Carrusel>
       <LatestArticles></LatestArticles>
-      <BlogBanner></BlogBanner>
       <CardVideo></CardVideo>
-      <Categories></Categories>
       <MostPopular></MostPopular>
-      <BlogBlockIntroPage></BlogBlockIntroPage>
+      <Publicidad></Publicidad>
+      <Cards></Cards>
+      <Cards></Cards>
       <NewsDashboard></NewsDashboard>
       
     </div>

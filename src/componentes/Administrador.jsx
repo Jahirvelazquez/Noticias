@@ -1,180 +1,292 @@
-import React, { useState } from 'react';
-import { database, storage } from '../firebaseConfig';
-import { ref, set } from 'firebase/database';
-import { ref as storageRef, uploadBytes, getDownloadURL } from 'firebase/storage';
+import React, { useState, useEffect } from "react";
+import Modal from "react-modal";
+import {
+  MDBContainer, MDBRow, MDBCol, MDBCard, MDBCardBody, MDBCardTitle, MDBBtn,
+  MDBTypography, MDBInput, MDBTable, MDBTableHead, MDBTableBody,
+  MDBDropdown, MDBDropdownToggle, MDBDropdownMenu, MDBDropdownItem
+} from "mdb-react-ui-kit";
+import { FaTrash, FaFilter, FaPlus, FaChevronLeft, FaChevronRight, FaAngleDoubleLeft, FaAngleDoubleRight } from "react-icons/fa";
+import { getDatabase, ref, get, remove } from "firebase/database";
+import AdminNavbar from "./AdminNavbar";
+import SubirNoticia from "./SubirNoticia";
 
-const Administrador = () => {
-    const [title, setTitle] = useState('');
-    const [content, setContent] = useState('');
-    const [category, setCategory] = useState('');
-    const [videoUrls, setVideoUrls] = useState([]);
-    const [files, setFiles] = useState([]);
-    const [uploadVideo, setUploadVideo] = useState(false);
+Modal.setAppElement("#root");
 
-    const handleAddVideoUrl = () => {
-        setVideoUrls([...videoUrls, '']);
-    };
+const AdminDashboard = () => {
+  const [newsData, setNewsData] = useState([]);
+  const [filters, setFilters] = useState({ category: "", search: "" });
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [currentPage, setCurrentPage] = useState(1);
+  const newsPerPage = 10;
 
-    const handleVideoUrlChange = (index, value) => {
-        const newVideoUrls = [...videoUrls];
-        newVideoUrls[index] = value;
-        setVideoUrls(newVideoUrls);
-    };
+  useEffect(() => {
+    const fetchNews = async () => {
+      const db = getDatabase();
+      const newsRef = ref(db, "news");
 
-    const handleUpload = async (e) => {
-        e.preventDefault();
-
-        const newsId = Date.now().toString();
-        const dateTime = new Date().toISOString();  // Guardar la fecha en formato ISO
-        let fileUrls = [];
-
-        for (let file of files) {
-            const fileRef = storageRef(storage, `news_files/${newsId}_${file.name}`);
-            await uploadBytes(fileRef, file);
-            const fileUrl = await getDownloadURL(fileRef);
-            fileUrls.push(fileUrl);
+      try {
+        const snapshot = await get(newsRef);
+        if (snapshot.exists()) {
+          const data = snapshot.val();
+          const formattedNewsData = Object.keys(data).map((key) => ({
+            id: key,
+            title: data[key].title,
+            category: data[key].category,
+            content: data[key].content,
+            dateTime: data[key].dateTime,
+            fileUrls: data[key].fileUrls || []
+          }));
+          setNewsData(formattedNewsData);
+        } else {
+          setNewsData([]);
         }
-
-        await set(ref(database, 'news/' + newsId), {
-            title,
-            content,
-            videoUrls,
-            dateTime,
-            category,
-            fileUrls
-        });
-
-        alert('Noticia subida con éxito!');
-        setTitle('');
-        setContent('');
-        setCategory('');
-        setVideoUrls([]);
-        setFiles([]);
-        setUploadVideo(false);
+      } catch (error) {
+        console.error("Error fetching news:", error);
+      }
     };
 
-    return (
-        <form onSubmit={handleUpload} style={formStyle}>
-            <input
-                type="text"
-                placeholder="Título"
-                value={title || ''}
-                onChange={(e) => setTitle(e.target.value)}
-                required
-                style={inputStyle}
-            />
-            <textarea
-                placeholder="Contenido"
-                value={content || ''}
-                onChange={(e) => setContent(e.target.value)}
-                required
-                style={textareaStyle}
-            />
-            <select
-                value={category}
-                onChange={(e) => setCategory(e.target.value)}
-                required
-                style={inputStyle}
-            >
-                <option value="">Selecciona una categoría</option>
-                <option value="COAHUILA">COAHUILA</option>
-                <option value="La Laguna">LA LAGUNA</option>
-                <option value="NACIONAL">NACIONAL</option>
-                <option value="San Pedro">San Pedro</option>
-                <option value="Parras">Parras</option>
-                <option value="Fco.l.Madero">Fco.l.Madero"</option>
-                <option value="Matamoros">Matamoros</option>
-            </select>
-            <div style={inputStyle}>
-                <label>
-                    <input
-                        type="radio"
-                        name="videoOption"
-                        checked={!uploadVideo}
-                        onChange={() => setUploadVideo(false)}
-                    />{' '}
-                    Enlace de video
-                </label>
-                <label>
-                    <input
-                        type="radio"
-                        name="videoOption"
-                        checked={uploadVideo}
-                        onChange={() => setUploadVideo(true)}
-                    />{' '}
-                    Subir video
-                </label>
-            </div>
-            {!uploadVideo ? (
-                <>
-                    {videoUrls.map((url, index) => (
-                        <div key={index} style={{ marginBottom: '10px' }}>
-                            <input
-                                type="url"
-                                placeholder="Enlace de video"
-                                value={url}
-                                onChange={(e) => handleVideoUrlChange(index, e.target.value)}
-                                style={inputStyle}
-                            />
-                        </div>
-                    ))}
-                    <button type="button" onClick={handleAddVideoUrl} style={buttonStyle}>
-                        Agregar otro enlace
-                    </button>
-                </>
-            ) : (
-                <input
-                    type="file"
-                    accept="video/*"
-                    onChange={(e) => setFiles(Array.from(e.target.files))}
-                    style={inputStyle}
-                />
-            )}
-            <input
-                type="file"
-                multiple
-                accept="image/*"
-                onChange={(e) => setFiles(Array.from(e.target.files))}
-                style={inputStyle}
-            />
-            <button type="submit" style={buttonStyle}>Subir Noticia</button>
-        </form>
+    fetchNews();
+  }, []);
+
+  const filterNews = () => {
+    return newsData.filter(
+      (news) =>
+        news.title.toLowerCase().includes(filters.search.toLowerCase()) &&
+        (filters.category ? news.category === filters.category : true)
     );
+  };
+
+  const filteredNews = filterNews();
+  const indexOfLastNews = currentPage * newsPerPage;
+  const indexOfFirstNews = indexOfLastNews - newsPerPage;
+  const currentNews = filteredNews.slice(indexOfFirstNews, indexOfLastNews);
+  const totalPages = Math.ceil(filteredNews.length / newsPerPage);
+
+  const handlePageChange = (pageNumber) => {
+    setCurrentPage(pageNumber);
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  };
+
+  const handleCategoryChange = (category) => {
+    setFilters({ ...filters, category });
+    setCurrentPage(1);
+  };
+
+  const handleSearchChange = (e) => {
+    setFilters({ ...filters, search: e.target.value });
+    setCurrentPage(1);
+  };
+
+  const deleteNews = (id) => {
+    if (window.confirm("¿Estás seguro de que quieres eliminar esta noticia?")) {
+      const db = getDatabase();
+      remove(ref(db, `news/${id}`))
+        .then(() => {
+          setNewsData(newsData.filter((news) => news.id !== id));
+        })
+        .catch((error) => console.error("Error al eliminar noticia:", error));
+    }
+  };
+
+  const handleFirstPage = () => setCurrentPage(1);
+  const handleLastPage = () => setCurrentPage(totalPages);
+  const handleNextPage = () => setCurrentPage(Math.min(currentPage + 1, totalPages));
+  const handlePrevPage = () => setCurrentPage(Math.max(currentPage - 1, 1));
+
+  return (
+    <>
+      <AdminNavbar />
+      <MDBContainer className="my-5">
+        <MDBRow>
+          <MDBCol md="12">
+            <MDBTypography tag="h3" className="fw-bold mb-4">
+              Dashboard de Administrador
+            </MDBTypography>
+          </MDBCol>
+        </MDBRow>
+
+        <MDBRow>
+          <MDBCol md="12">
+            <MDBCard className="shadow-sm mb-4">
+              <MDBCardBody>
+                <MDBCardTitle>
+                  <div className="d-flex justify-content-between">
+                    <span>Gestionar Noticias</span>
+                    <MDBBtn size="sm" color="primary" onClick={() => setIsModalOpen(true)}>
+                      <FaPlus /> Subir Noticia
+                    </MDBBtn>
+                  </div>
+                </MDBCardTitle>
+
+                <div className="d-flex justify-content-between mb-3">
+                  <MDBInput label="Buscar Noticias" size="sm" onChange={handleSearchChange} />
+                  <MDBDropdown>
+                    <MDBDropdownToggle size="sm" color="secondary">
+                      <FaFilter /> Filtrar por Categoría
+                    </MDBDropdownToggle>
+                    <MDBDropdownMenu>
+                      {["COAHUILA", "La Laguna", "NACIONAL", "San Pedro", "Parras", "Fco.l.Madero", "Matamoros", ""].map((category) => (
+                        <MDBDropdownItem key={category} onClick={() => handleCategoryChange(category)}>
+                          {category || "Todos"}
+                        </MDBDropdownItem>
+                      ))}
+                    </MDBDropdownMenu>
+                  </MDBDropdown>
+                </div>
+
+                <MDBTable>
+                  <MDBTableHead>
+                    <tr>
+                      <th>Portada</th>
+                      <th>Título</th>
+                      <th>Categoría</th>
+                      <th>Fecha</th>
+                      <th>Acciones</th>
+                    </tr>
+                  </MDBTableHead>
+                  <MDBTableBody>
+                    {currentNews.length > 0 ? (
+                      currentNews.map((news) => (
+                        <tr key={news.id}>
+                          <td>
+                            {news.fileUrls.length > 0 ? (
+                              <img src={news.fileUrls[0]} alt="Portada" style={{ width: "100px", height: "60px", objectFit: "cover" }} />
+                            ) : (
+                              "Sin imagen"
+                            )}
+                          </td>
+                          <td>{news.title}</td>
+                          <td>{news.category}</td>
+                          <td>{new Date(news.dateTime).toLocaleDateString()}</td>
+                          <td>
+                            <MDBBtn color="danger" size="sm" onClick={() => deleteNews(news.id)}>
+                              <FaTrash /> Eliminar
+                            </MDBBtn>
+                          </td>
+                        </tr>
+                      ))
+                    ) : (
+                      <tr>
+                        <td colSpan="5" className="text-center">
+                          No hay noticias disponibles.
+                        </td>
+                      </tr>
+                    )}
+                  </MDBTableBody>
+                </MDBTable>
+
+                {totalPages > 1 && (
+  <div className="d-flex justify-content-center mt-3">
+    {/* Flecha para ir a la primera página */}
+    <MDBBtn
+      size="sm"
+      color="secondary"
+      onClick={() => {
+        handleFirstPage();
+        window.scrollTo({ top: 0, behavior: "smooth" });
+      }}
+    >
+      <FaAngleDoubleLeft />
+    </MDBBtn>
+
+    {/* Flecha para ir a la página anterior */}
+    <MDBBtn
+      size="sm"
+      color="secondary"
+      onClick={() => {
+        handlePrevPage();
+        window.scrollTo({ top: 0, behavior: "smooth" });
+      }}
+    >
+      <FaChevronLeft />
+    </MDBBtn>
+
+    {/* Páginas numeradas */}
+    {[...Array(totalPages)].map((_, index) => (
+      <MDBBtn
+        key={index + 1}
+        size="sm"
+        color={currentPage === index + 1 ? "primary" : "secondary"}
+        className="mx-1"
+        onClick={() => {
+          handlePageChange(index + 1);
+          window.scrollTo({ top: 0, behavior: "smooth" });
+        }}
+      >
+        {index + 1}
+      </MDBBtn>
+    ))}
+
+    {/* Flecha para ir a la página siguiente */}
+    <MDBBtn
+      size="sm"
+      color="secondary"
+      onClick={() => {
+        handleNextPage();
+        window.scrollTo({ top: 0, behavior: "smooth" });
+      }}
+    >
+      <FaChevronRight />
+    </MDBBtn>
+
+    {/* Flecha para ir a la última página */}
+    <MDBBtn
+      size="sm"
+      color="secondary"
+      onClick={() => {
+        handleLastPage();
+        window.scrollTo({ top: 0, behavior: "smooth" });
+      }}
+    >
+      <FaAngleDoubleRight />
+    </MDBBtn>
+  </div>
+)}
+
+              </MDBCardBody>
+            </MDBCard>
+          </MDBCol>
+        </MDBRow>
+      </MDBContainer>
+
+     {/* Modal */}
+     <Modal
+        isOpen={isModalOpen}
+        onRequestClose={() => setIsModalOpen(false)}
+        style={{
+          content: {
+            width: "80%",
+            height: "80%",
+            margin: "auto",
+            borderRadius: "10px",
+            padding: "20px",
+          },
+          overlay: {
+            backgroundColor: "rgba(0, 0, 0, 0.5)",
+          },
+        }}
+      >
+        <button
+          onClick={() => setIsModalOpen(false)}
+          style={{
+            position: "absolute",
+            top: "10px",
+            right: "15px",
+            background: "red",
+            color: "white",
+            border: "none",
+            borderRadius: "5px",
+            padding: "5px 10px",
+            cursor: "pointer",
+          }}
+        >
+          X
+        </button>
+        <h2>Subir Nueva Noticia</h2>
+        <SubirNoticia />
+      </Modal>
+    </>
+  );
 };
 
-
-const formStyle = {
-    display: 'flex',
-    flexDirection: 'column',
-    width: '300px',
-    margin: 'auto',
-    padding: '20px',
-    border: '1px solid #ccc',
-    borderRadius: '5px',
-    backgroundColor: '#f9f9f9'
-};
-
-const inputStyle = {
-    marginBottom: '10px',
-    padding: '10px',
-    fontSize: '16px'
-};
-
-const textareaStyle = {
-    marginBottom: '10px',
-    padding: '10px',
-    fontSize: '16px',
-    height: '100px'
-};
-
-const buttonStyle = {
-    padding: '10px',
-    fontSize: '16px',
-    backgroundColor: '#007BFF',
-    color: '#fff',
-    border: 'none',
-    borderRadius: '5px',
-    cursor: 'pointer'
-};
-
-export default Administrador;
+export default AdminDashboard;
