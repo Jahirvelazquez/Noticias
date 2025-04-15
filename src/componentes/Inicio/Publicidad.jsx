@@ -43,10 +43,9 @@ const Publicidad = () => {
         <MDBCol md="12">
           <MDBCard className="text-center">
             <MDBCardBody>
-              
-
               {publicidad.length > 1 ? (
-                <MDBCarousel showControls={false} interval={3000}>
+                // Añadir la propiedad fade para la transición de desvanecimiento
+                <MDBCarousel showControls={false} interval={3000} fade>
                   {publicidad.map((item, index) => (
                     <MDBCarouselItem key={index}>
                       <MDBCardImage
