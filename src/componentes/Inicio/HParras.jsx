@@ -14,7 +14,7 @@ const formatDate = (dateTimeString) => {
   });
 };
 
-const HCoahuila = () => {
+const HParras = () => {
   const [nationalNews, setNationalNews] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -271,7 +271,7 @@ const HCoahuila = () => {
     position: 'relative',
     zIndex: 2
   }}>
-    COAHUILA
+    PARRAS
   </div>
 
   {/* Línea azul más abajo */}
@@ -369,6 +369,6 @@ const HCoahuila = () => {
 
 };
 
-export default HCoahuila;
+export default HParras;
 
 

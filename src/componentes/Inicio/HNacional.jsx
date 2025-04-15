@@ -27,25 +27,6 @@ const HNacional = () => {
       padding: '20px',
       fontFamily: 'Arial, sans-serif',
     },
-    header: {
-      backgroundColor: '#f2f2f2',
-      borderTop: '4px solid #0056D2',
-      padding: '10px 20px',
-      fontWeight: 'bold',
-      color: '#0056D2',
-      display: 'inline-block',
-      position: 'relative',
-    },
-    headerTriangle: {
-      width: 0,
-      height: 0,
-      borderLeft: '10px solid #0056D2',
-      borderTop: '20px solid transparent',
-      borderBottom: '20px solid transparent',
-      position: 'absolute',
-      right: '-10px',
-      top: '0',
-    },
     mainGrid: {
       display: 'flex',
       flexDirection: isMobile ? 'column' : 'row',
@@ -162,6 +143,8 @@ const HNacional = () => {
       display: 'block',
       margin: '0 auto', // Centra la imagen si el contenedor es más grande
       borderRadius: '8px', // Opcional: bordes suaves
+      cursor: 'pointer',
+
     },
 
 
@@ -265,20 +248,92 @@ const HNacional = () => {
     prevArrow: <CustomPrevArrow />,
     nextArrow: <CustomNextArrow />,
     adaptiveHeight: false,
+    pauseOnHover: false, // <- Esta es la línea clave
+    pauseOnFocus: false,
   };
 
   if (loading) return <div>Loading...</div>;
   if (error) return <div>Error: {error}</div>;
   return (
     <div style={styles.container}>
-      <div style={styles.header}>
-        NACIONAL
-        <div style={styles.headerTriangle}></div>
+      <div style={{ position: 'relative', marginBottom: '30px' }}>
+        <div style={{
+          backgroundColor: '#0056e0',
+          color: 'white',
+          fontWeight: 'bold',
+          padding: '12px 25px',
+          display: 'inline-block',
+          clipPath: 'polygon(0 0, 85% 0, 100% 100%, 0% 100%)',
+          fontSize: '16px',
+          position: 'relative',
+          zIndex: 2
+        }}>
+          NACIONAL
+        </div>
+        <div style={{
+          position: 'absolute',
+          left: 0,
+          bottom: -5,
+          width: '100%',
+          height: '3px',
+          backgroundColor: '#0056e0',
+          zIndex: 1
+        }}></div>
       </div>
-
-      {/* AQUI APLICAMOS EL CAMBIO */}
-      <div style={{ ...styles.mainGrid, ...responsiveStyles.mainGrid }}>
-        {/* Cards a la izquierda ahora */}
+  
+      {/* Contenedor principal con orden invertido */}
+      <div style={{ 
+        ...styles.mainGrid, 
+        ...responsiveStyles.mainGrid, 
+      }}>
+        
+        {/* Carrusel ahora a la izquierda */}
+        {nationalNews.length > 0 && (
+          <div style={styles.carouselContainer}>
+            <Slider {...settings}>
+              {nationalNews.slice(0, 5).map((news, index) => (
+                <div
+                  key={index}
+                  onClick={() => navigate(`/news/${news.id}`)}
+                  style={{
+                    width: '100%',
+                    height: '100%',
+                    overflow: 'hidden',
+                    position: 'relative',
+                    cursor: 'pointer',
+                  }}
+                >
+                  <img
+                    src={news.fileUrls?.[0] || '/path/to/default-image.jpg'}
+                    alt="Main news"
+                    style={styles.carouselImage}
+                  />
+  
+                  <div
+                    style={{
+                      position: 'absolute',
+                      bottom: '20px',
+                      left: '20px',
+                      right: '20px',
+                      color: 'white',
+                      fontSize: '2rem',
+                      fontWeight: 'bold',
+                      textShadow: '2px 2px 4px rgba(0, 0, 0, 0.8)',
+                      background: 'rgba(0, 0, 0, 0.3)',
+                      padding: '10px 15px',
+                      borderRadius: '10px',
+                      maxWidth: '90%',
+                    }}
+                  >
+                    {news.title}
+                  </div>
+                </div>
+              ))}
+            </Slider>
+          </div>
+        )}
+  
+        {/* Cards ahora a la derecha */}
         <div style={styles.sideNews}>
           {nationalNews.slice(1, 6).map((news, index) => (
             <div
@@ -308,55 +363,10 @@ const HNacional = () => {
             </div>
           ))}
         </div>
-
-        {/* Carrusel ahora a la derecha */}
-        {nationalNews.length > 0 && (
-          <div style={styles.carouselContainer}>
-            <Slider {...settings}>
-              {nationalNews.slice(0, 5).map((news, index) => (
-                <div
-                  key={index}
-                  onClick={() => navigate(`/news/${news.id}`)}
-                  style={{
-                    width: '100%',
-                    height: '100%',
-                    overflow: 'hidden',
-                    position: 'relative',
-                    cursor: 'pointer',
-                  }}
-                >
-                  <img
-                    src={news.fileUrls?.[0] || '/path/to/default-image.jpg'}
-                    alt="Main news"
-                    style={styles.carouselImage}
-                  />
-
-                  <div
-                    style={{
-                      position: 'absolute',
-                      bottom: '20px',
-                      left: '20px',
-                      right: '20px',
-                      color: 'white',
-                      fontSize: '2rem',
-                      fontWeight: 'bold',
-                      textShadow: '2px 2px 4px rgba(0, 0, 0, 0.8)',
-                      background: 'rgba(0, 0, 0, 0.3)',
-                      padding: '10px 15px',
-                      borderRadius: '10px',
-                      maxWidth: '90%',
-                    }}
-                  >
-                    {news.title}
-                  </div>
-                </div>
-              ))}
-            </Slider>
-          </div>
-        )}
       </div>
     </div>
   );
+
 
 };
 

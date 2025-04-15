@@ -14,7 +14,7 @@ const formatDate = (dateTimeString) => {
   });
 };
 
-const HCoahuila = () => {
+const HMatamoros = () => {
   const [nationalNews, setNationalNews] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -369,6 +369,6 @@ const HCoahuila = () => {
 
 };
 
-export default HCoahuila;
+export default HMatamoros;
 
 
