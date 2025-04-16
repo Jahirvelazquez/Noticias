@@ -14,6 +14,7 @@ import HSanpedro from './Inicio/HSanpedro';
 import HParras from './Inicio/HParras';
 import HMadero from './Inicio/HMadero';
 import HMatamoros from './Inicio/HMatamoros';
+import HNoticias from './Inicio/HNoticias';
 
 
 const Inicio = () => {
@@ -22,8 +23,8 @@ const Inicio = () => {
   return (
     <div>
       <Carrusel></Carrusel>
-      
-      <HCoahuila></HCoahuila> 
+      <NewsDashboard></NewsDashboard>
+      <HNoticias></HNoticias>
       <LatestArticles></LatestArticles>  
       <HNacional></HNacional>
 
@@ -35,9 +36,10 @@ const Inicio = () => {
       <HParras></HParras>
       <Cards></Cards>
       <HMadero></HMadero>
+      <Publicidad></Publicidad>
       <HMatamoros></HMatamoros>
-      <NewsDashboard></NewsDashboard>
-      
+      <HCoahuila></HCoahuila> 
+
     </div>
   );
 };

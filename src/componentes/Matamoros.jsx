@@ -15,39 +15,49 @@ import {
 } from 'mdb-react-ui-kit';
 import './Categorias.css';
 
+const getYouTubeThumbnail = (url) => {
+  const videoIdMatch = url.match(/(?:youtu\.be\/|youtube\.com\/(?:watch\?v=|embed\/|v\/))([\w-]+)/);
+  return videoIdMatch ? `https://img.youtube.com/vi/${videoIdMatch[1]}/hqdefault.jpg` : null;
+};
+
+const getDriveThumbnail = (url) => {
+  const fileIdMatch = url.match(/(?:file\/d\/|id=)([\w-]+)/);
+  return fileIdMatch ? `https://drive.google.com/thumbnail?id=${fileIdMatch[1]}` : null;
+};
+
 const Matamoros = () => {
-  const [nationalNews, setNationalNews] = useState([]);
+  const [matamorosNews, setMatamorosNews] = useState([]);
   const [loading, setLoading] = useState(true);
   const [currentPage, setCurrentPage] = useState(1);
-  const newsPerPage = 10; // Número de noticias por página
+  const newsPerPage = 10;
 
   useEffect(() => {
-    const nationalNewsRef = ref(database, 'news/');
-    onValue(nationalNewsRef, (snapshot) => {
+    const newsRef = ref(database, 'news/');
+    onValue(newsRef, (snapshot) => {
       const data = snapshot.val();
       const newsArray = data
         ? Object.entries(data)
             .map(([key, value]) => ({ id: key, ...value }))
-            .filter((item) => item.category === 'Matamoros')
+            .filter(
+              (item) =>
+                item.category === 'Matamoros' ||
+                (item.category && item.category.includes('Matamoros'))
+            )
         : [];
-      setNationalNews(newsArray.sort((a, b) => new Date(b.dateTime) - new Date(a.dateTime)));
+      setMatamorosNews(newsArray.sort((a, b) => new Date(b.dateTime) - new Date(a.dateTime)));
       setLoading(false);
     });
   }, []);
 
-  // Calcular total de páginas
-  const totalPages = Math.ceil(nationalNews.length / newsPerPage);
-
-  // Manejo de cambio de página
+  const totalPages = Math.ceil(matamorosNews.length / newsPerPage);
   const handleClick = (pageNumber) => {
     setCurrentPage(pageNumber);
-    window.scrollTo(0, 0); // Desplazar al principio de la página
+    window.scrollTo(0, 0);
   };
 
-  // Noticias a mostrar en la página actual
   const indexOfLastNews = currentPage * newsPerPage;
   const indexOfFirstNews = indexOfLastNews - newsPerPage;
-  const currentNews = nationalNews.slice(indexOfFirstNews, indexOfLastNews);
+  const currentNews = matamorosNews.slice(indexOfFirstNews, indexOfLastNews);
 
   if (loading) {
     return <div>Cargando...</div>;
@@ -62,88 +72,81 @@ const Matamoros = () => {
           </div>
         </div>
       </div>
+
       <div className='mt-4'>
+        {currentNews.map((item) => {
+          const videoUrl = item.videoUrls && item.videoUrls.length > 0 ? item.videoUrls[0] : null;
+          const imageUrl = item.fileUrls && item.fileUrls.length > 0 ? item.fileUrls[0] : null;
 
-{currentNews.map((item) => (
-  <Link to={`/news/${item.id}`} key={item.id} className="news-item-link">
-    <div className="news-card"> {/* Usar la clase CSS aquí */}
-      <MDBCard className='mb-3'>
-        <MDBRow className='g-0'>
-          {/* Contenedor Simétrico para Imagen o Video */}
-          <MDBCol md='5' className="d-flex align-items-center justify-content-center" style={{ height: '300px', padding: 0 }}>
-            {item.fileUrls && item.fileUrls.length > 0 && (
-              <MDBCardImage
-                src={item.fileUrls[0]} // Asegúrate de que esta URL sea válida
-                alt="Imagen noticia"
-                fluid
-                className='rounded-start'
-                style={{
-                  height: '100%', // Asegurar que la imagen ocupe toda la altura del contenedor
-                  width: '100%', // Asegurar que la imagen ocupe todo el ancho del contenedor
-                  objectFit: 'cover', // Mantener la proporción
-                  padding: 0, // Eliminar padding de la imagen
-                  margin: 0, // Eliminar margen de la imagen
-                }}
-              />
-            )}
-            {item.videoUrls && item.videoUrls.length > 0 && (
-              <iframe
-                src={item.videoUrls[0].replace('watch?v=', 'embed/')} // Cambiar la URL para incrustar
-                title="Video de Noticia NACIONAL"
-                allowFullScreen
-                width="100%" // Ajustar el ancho
-                height="100%" // Ajustar la altura para que se vea bien
-                className="rounded-start"
-                style={{
-                  border: 'none',
-                  height: '100%',
-                  width: '100%',
-                  objectFit: 'cover', // Asegura que el video ocupe todo el espacio
-                }}
-              />
-            )}
-          </MDBCol>
+          let thumbnail = null;
+          if (videoUrl) {
+            thumbnail = getYouTubeThumbnail(videoUrl) || getDriveThumbnail(videoUrl) || 'https://via.placeholder.com/640x360?text=Video';
+          }
 
-          {/* Contenido */}
-          <MDBCol md='7'> {/* Aumentar a 7 para balancear el espacio */}
-            <MDBCardBody>
-              {/* Etiqueta de categoría */}
-              <MDBBadge color='primary' pill>
-              Matamoros
-              </MDBBadge>
-              
-              {/* Título de la noticia */}
-              <h5 className='mt-2'>{item.title}</h5>
+          return (
+            <Link to={`/news/${item.id}`} key={item.id} className="news-item-link">
+              <div className="news-card">
+                <MDBCard className='mb-3'>
+                  <MDBRow className='g-0'>
+                    <MDBCol md='5' className="d-flex align-items-center justify-content-center" style={{ height: '300px', padding: 0 }}>
+                      {imageUrl ? (
+                        <MDBCardImage
+                          src={imageUrl}
+                          alt="Imagen noticia"
+                          fluid
+                          className='rounded-start'
+                          style={{
+                            height: '100%',
+                            width: '100%',
+                            objectFit: 'cover',
+                            padding: 0,
+                            margin: 0,
+                          }}
+                        />
+                      ) : videoUrl ? (
+                        <MDBCardImage
+                          src={thumbnail}
+                          alt="Miniatura del video"
+                          fluid
+                          className='rounded-start'
+                          style={{
+                            height: '100%',
+                            width: '100%',
+                            objectFit: 'cover',
+                            padding: 0,
+                            margin: 0,
+                          }}
+                        />
+                      ) : null}
+                    </MDBCol>
 
-              {/* Fecha de la noticia */}
-              <p className='text-muted'>
-                {item.dateTime ? new Date(item.dateTime).toLocaleDateString() : 'Fecha no disponible'}
-              </p>
+                    <MDBCol md='7'>
+                      <MDBCardBody>
+                        <MDBBadge color='primary' pill>Matamoros</MDBBadge>
+                        <h5 className='mt-2'>{item.title}</h5>
+                        <p className='text-muted'>
+                          {item.dateTime ? new Date(item.dateTime).toLocaleDateString() : 'Fecha no disponible'}
+                        </p>
+                        <p className='card-text'>
+                          {item.content.split(' ').slice(0, 40).join(' ')}...
+                        </p>
+                      </MDBCardBody>
+                    </MDBCol>
+                  </MDBRow>
+                </MDBCard>
+              </div>
+            </Link>
+          );
+        })}
+      </div>
 
-              {/* Descripción */}
-              <p className='card-text'>
-                {item.content.split(' ').slice(0, 40).join(' ')}...
-              </p>
-            </MDBCardBody>
-          </MDBCol>
-        </MDBRow>
-      </MDBCard>
-    </div>
-  </Link>
-))}
-</div>
-      {/* Paginación con MDBootstrap */}
       <nav aria-label='Page navigation example'>
         <MDBPagination className='mb-0'>
           <MDBPaginationItem disabled={currentPage === 1}>
-            <MDBPaginationLink onClick={() => handleClick(1)} tabIndex="-1">
-              «
-            </MDBPaginationLink>
+            <MDBPaginationLink onClick={() => handleClick(1)} tabIndex="-1">«</MDBPaginationLink>
           </MDBPaginationItem>
           <MDBPaginationItem disabled={currentPage === 1}>
-            <MDBPaginationLink onClick={() => handleClick(currentPage - 1)}>
-              ‹
-            </MDBPaginationLink>
+            <MDBPaginationLink onClick={() => handleClick(currentPage - 1)}>‹</MDBPaginationLink>
           </MDBPaginationItem>
 
           {Array.from({ length: totalPages }, (_, index) => index + 1)
@@ -156,14 +159,10 @@ const Matamoros = () => {
               </MDBPaginationItem>
             ))}
           <MDBPaginationItem disabled={currentPage === totalPages}>
-            <MDBPaginationLink onClick={() => handleClick(currentPage + 1)}>
-              ›
-            </MDBPaginationLink>
+            <MDBPaginationLink onClick={() => handleClick(currentPage + 1)}>›</MDBPaginationLink>
           </MDBPaginationItem>
           <MDBPaginationItem disabled={currentPage === totalPages}>
-            <MDBPaginationLink onClick={() => handleClick(totalPages)}>
-              »
-            </MDBPaginationLink>
+            <MDBPaginationLink onClick={() => handleClick(totalPages)}>»</MDBPaginationLink>
           </MDBPaginationItem>
         </MDBPagination>
       </nav>

@@ -177,12 +177,19 @@ const HNacional = () => {
   useEffect(() => {
     const db = getDatabase();
     const newsRef = ref(db, 'news');
-
+  
+    // Cambiar el `onValue` para ordenar y limitar los resultados
     onValue(newsRef, (snapshot) => {
       const data = snapshot.val();
       if (data) {
-        const newsArray = Object.entries(data).map(([id, value]) => ({ id, ...value }));
-        setNationalNews(newsArray.filter(news => news.category === "NACIONAL"));
+        // Ordenar las noticias por fecha descendente (más reciente primero)
+        const newsArray = Object.entries(data)
+          .map(([id, value]) => ({ id, ...value }))
+          .filter(news => news.category === "NACIONAL")  // Filtrar por categoría
+          .sort((a, b) => new Date(b.dateTime) - new Date(a.dateTime));  // Ordenar por fecha
+  
+        // Tomar solo las primeras 15 noticias
+        setNationalNews(newsArray.slice(0, 15));
         setLoading(false);
       } else {
         setError('No data available');
@@ -193,6 +200,8 @@ const HNacional = () => {
       setLoading(false);
     });
   }, []);
+  
+
   const CustomPrevArrow = ({ onClick }) => (
     <div
       onClick={onClick}
@@ -254,6 +263,11 @@ const HNacional = () => {
 
   if (loading) return <div>Loading...</div>;
   if (error) return <div>Error: {error}</div>;
+  const getYouTubeThumbnail = (url) => {
+    const videoIdMatch = url.match(/(?:youtu\.be\/|youtube\.com\/(?:watch\?v=|embed\/|v\/))([\w-]+)/);
+    return videoIdMatch ? `https://img.youtube.com/vi/${videoIdMatch[1]}/hqdefault.jpg` : null;
+  };
+  
   return (
     <div style={styles.container}>
       <div style={{ position: 'relative', marginBottom: '30px' }}>
@@ -282,94 +296,104 @@ const HNacional = () => {
       </div>
   
       {/* Contenedor principal con orden invertido */}
-      <div style={{ 
-        ...styles.mainGrid, 
-        ...responsiveStyles.mainGrid, 
+      <div style={{
+        ...styles.mainGrid,
+        ...responsiveStyles.mainGrid,
       }}>
-        
+  
         {/* Carrusel ahora a la izquierda */}
         {nationalNews.length > 0 && (
           <div style={styles.carouselContainer}>
             <Slider {...settings}>
-              {nationalNews.slice(0, 5).map((news, index) => (
-                <div
-                  key={index}
-                  onClick={() => navigate(`/news/${news.id}`)}
-                  style={{
-                    width: '100%',
-                    height: '100%',
-                    overflow: 'hidden',
-                    position: 'relative',
-                    cursor: 'pointer',
-                  }}
-                >
-                  <img
-                    src={news.fileUrls?.[0] || '/path/to/default-image.jpg'}
-                    alt="Main news"
-                    style={styles.carouselImage}
-                  />
+              {nationalNews.slice(0, 5).map((news, index) => {
+                // Obtener la miniatura si hay un video
+                const videoUrl = news.videoUrls?.[0]; // Suponiendo que solo haya un video
+                const thumbnail = videoUrl ? getYouTubeThumbnail(videoUrl) : news.fileUrls?.[0] || '/path/to/default-image.jpg';
   
+                return (
                   <div
+                    key={index}
+                    onClick={() => navigate(`/news/${news.id}`)}
                     style={{
-                      position: 'absolute',
-                      bottom: '20px',
-                      left: '20px',
-                      right: '20px',
-                      color: 'white',
-                      fontSize: '2rem',
-                      fontWeight: 'bold',
-                      textShadow: '2px 2px 4px rgba(0, 0, 0, 0.8)',
-                      background: 'rgba(0, 0, 0, 0.3)',
-                      padding: '10px 15px',
-                      borderRadius: '10px',
-                      maxWidth: '90%',
+                      width: '100%',
+                      height: '100%',
+                      overflow: 'hidden',
+                      position: 'relative',
+                      cursor: 'pointer',
                     }}
                   >
-                    {news.title}
+                    <img
+                      src={thumbnail}
+                      alt="Main news"
+                      style={styles.carouselImage}
+                    />
+                    <div
+                      style={{
+                        position: 'absolute',
+                        bottom: '20px',
+                        left: '20px',
+                        right: '20px',
+                        color: 'white',
+                        fontSize: '2rem',
+                        fontWeight: 'bold',
+                        textShadow: '2px 2px 4px rgba(0, 0, 0, 0.8)',
+                        background: 'rgba(0, 0, 0, 0.3)',
+                        padding: '10px 15px',
+                        borderRadius: '10px',
+                        maxWidth: '90%',
+                      }}
+                    >
+                      {news.title}
+                    </div>
                   </div>
-                </div>
-              ))}
+                );
+              })}
             </Slider>
           </div>
         )}
   
         {/* Cards ahora a la derecha */}
         <div style={styles.sideNews}>
-          {nationalNews.slice(1, 6).map((news, index) => (
-            <div
-              key={index}
-              style={{
-                ...styles.newsCard,
-                cursor: 'pointer',
-              }}
-              onClick={() => navigate(`/news/${news.id}`)}
-              onMouseEnter={(e) =>
-                (e.currentTarget.style.transform = 'scale(1.05)')
-              }
-              onMouseLeave={(e) =>
-                (e.currentTarget.style.transform = 'scale(1)')
-              }
-            >
-              <img
-                src={news.fileUrls?.[0] || '/path/to/default-thumbnail.jpg'}
-                alt="Thumbnail"
-                style={styles.thumbnail}
-              />
-              <div style={styles.newsInfo}>
-                <div style={styles.tag}>{news.category}</div>
-                <div style={styles.newsTitle}>{news.title}</div>
-                <div style={styles.newsDate}>⏰ {formatDate(news.dateTime)}</div>
+          {nationalNews.slice(1, 6).map((news, index) => {
+            // Obtener la miniatura si hay un video
+            const videoUrl = news.videoUrls?.[0]; // Suponiendo que solo haya un video
+            const thumbnail = videoUrl ? getYouTubeThumbnail(videoUrl) : news.fileUrls?.[0] || '/path/to/default-thumbnail.jpg';
+  
+            return (
+              <div
+                key={index}
+                style={{
+                  ...styles.newsCard,
+                  cursor: 'pointer',
+                }}
+                onClick={() => navigate(`/news/${news.id}`)}
+                onMouseEnter={(e) =>
+                  (e.currentTarget.style.transform = 'scale(1.05)')
+                }
+                onMouseLeave={(e) =>
+                  (e.currentTarget.style.transform = 'scale(1)')
+                }
+              >
+                <img
+                  src={thumbnail}
+                  alt="Thumbnail"
+                  style={styles.thumbnail}
+                />
+                <div style={styles.newsInfo}>
+                  <div style={styles.tag}>{news.category}</div>
+                  <div style={styles.newsTitle}>{news.title}</div>
+                  <div style={styles.newsDate}>⏰ {formatDate(news.dateTime)}</div>
+                </div>
               </div>
-            </div>
-          ))}
+            );
+          })}
         </div>
       </div>
     </div>
   );
-
-
-};
-
-export default HNacional;
+  };
+  
+  export default HNacional;
+  
 
 

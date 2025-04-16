@@ -16,6 +16,7 @@ const AdminDashboard = () => {
   const [newsData, setNewsData] = useState([]);
   const [filters, setFilters] = useState({ category: "", search: "" });
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [sortOrder, setSortOrder] = useState("desc"); // 'desc' o 'asc'
   const [currentPage, setCurrentPage] = useState(1);
   const newsPerPage = 10;
 
@@ -49,12 +50,23 @@ const AdminDashboard = () => {
   }, []);
 
   const filterNews = () => {
-    return newsData.filter(
+    const filtered = newsData.filter(
       (news) =>
         news.title.toLowerCase().includes(filters.search.toLowerCase()) &&
         (filters.category ? news.category === filters.category : true)
     );
+
+    return filtered.sort((a, b) => {
+      const dateA = new Date(a.dateTime);
+      const dateB = new Date(b.dateTime);
+      return sortOrder === "asc" ? dateA - dateB : dateB - dateA;
+    });
   };
+
+  const toggleSortOrder = () => {
+    setSortOrder((prevOrder) => (prevOrder === "asc" ? "desc" : "asc"));
+  };
+
 
   const filteredNews = filterNews();
   const indexOfLastNews = currentPage * newsPerPage;
@@ -118,21 +130,25 @@ const AdminDashboard = () => {
                   </div>
                 </MDBCardTitle>
 
-                <div className="d-flex justify-content-between mb-3">
+                <div className="d-flex justify-content-between mb-3 gap-2 flex-wrap">
                   <MDBInput label="Buscar Noticias" size="sm" onChange={handleSearchChange} />
                   <MDBDropdown>
-                    <MDBDropdownToggle size="sm" color="secondary">
+                    <MDBDropdownToggle size="sm" color="info">
                       <FaFilter /> Filtrar por Categoría
                     </MDBDropdownToggle>
                     <MDBDropdownMenu>
-                      {["COAHUILA", "La Laguna", "NACIONAL", "San Pedro", "Parras", "Fco.l.Madero", "Matamoros", ""].map((category) => (
+                      {["COAHUILA", "La Laguna", "NACIONAL", "San Pedro", "Parras", "Fco.l.Madero", "Matamoros", "Especiales", ""].map((category) => (
                         <MDBDropdownItem key={category} onClick={() => handleCategoryChange(category)}>
                           {category || "Todos"}
                         </MDBDropdownItem>
                       ))}
                     </MDBDropdownMenu>
                   </MDBDropdown>
+                  <MDBBtn size="sm" color="info" onClick={toggleSortOrder}>
+                    {sortOrder === "asc" ? "Más antiguas primero" : "Más recientes primero"}
+                  </MDBBtn>
                 </div>
+
 
                 <MDBTable>
                   <MDBTableHead>
@@ -176,72 +192,72 @@ const AdminDashboard = () => {
                 </MDBTable>
 
                 {totalPages > 1 && (
-  <div className="d-flex justify-content-center mt-3">
-    {/* Flecha para ir a la primera página */}
-    <MDBBtn
-      size="sm"
-      color="secondary"
-      onClick={() => {
-        handleFirstPage();
-        window.scrollTo({ top: 0, behavior: "smooth" });
-      }}
-    >
-      <FaAngleDoubleLeft />
-    </MDBBtn>
+                  <div className="d-flex justify-content-center mt-3">
+                    {/* Flecha para ir a la primera página */}
+                    <MDBBtn
+                      size="sm"
+                      color="secondary"
+                      onClick={() => {
+                        handleFirstPage();
+                        window.scrollTo({ top: 0, behavior: "smooth" });
+                      }}
+                    >
+                      <FaAngleDoubleLeft />
+                    </MDBBtn>
 
-    {/* Flecha para ir a la página anterior */}
-    <MDBBtn
-      size="sm"
-      color="secondary"
-      onClick={() => {
-        handlePrevPage();
-        window.scrollTo({ top: 0, behavior: "smooth" });
-      }}
-    >
-      <FaChevronLeft />
-    </MDBBtn>
+                    {/* Flecha para ir a la página anterior */}
+                    <MDBBtn
+                      size="sm"
+                      color="secondary"
+                      onClick={() => {
+                        handlePrevPage();
+                        window.scrollTo({ top: 0, behavior: "smooth" });
+                      }}
+                    >
+                      <FaChevronLeft />
+                    </MDBBtn>
 
-    {/* Páginas numeradas */}
-    {[...Array(totalPages)].map((_, index) => (
-      <MDBBtn
-        key={index + 1}
-        size="sm"
-        color={currentPage === index + 1 ? "primary" : "secondary"}
-        className="mx-1"
-        onClick={() => {
-          handlePageChange(index + 1);
-          window.scrollTo({ top: 0, behavior: "smooth" });
-        }}
-      >
-        {index + 1}
-      </MDBBtn>
-    ))}
+                    {/* Páginas numeradas */}
+                    {[...Array(totalPages)].map((_, index) => (
+                      <MDBBtn
+                        key={index + 1}
+                        size="sm"
+                        color={currentPage === index + 1 ? "primary" : "secondary"}
+                        className="mx-1"
+                        onClick={() => {
+                          handlePageChange(index + 1);
+                          window.scrollTo({ top: 0, behavior: "smooth" });
+                        }}
+                      >
+                        {index + 1}
+                      </MDBBtn>
+                    ))}
 
-    {/* Flecha para ir a la página siguiente */}
-    <MDBBtn
-      size="sm"
-      color="secondary"
-      onClick={() => {
-        handleNextPage();
-        window.scrollTo({ top: 0, behavior: "smooth" });
-      }}
-    >
-      <FaChevronRight />
-    </MDBBtn>
+                    {/* Flecha para ir a la página siguiente */}
+                    <MDBBtn
+                      size="sm"
+                      color="secondary"
+                      onClick={() => {
+                        handleNextPage();
+                        window.scrollTo({ top: 0, behavior: "smooth" });
+                      }}
+                    >
+                      <FaChevronRight />
+                    </MDBBtn>
 
-    {/* Flecha para ir a la última página */}
-    <MDBBtn
-      size="sm"
-      color="secondary"
-      onClick={() => {
-        handleLastPage();
-        window.scrollTo({ top: 0, behavior: "smooth" });
-      }}
-    >
-      <FaAngleDoubleRight />
-    </MDBBtn>
-  </div>
-)}
+                    {/* Flecha para ir a la última página */}
+                    <MDBBtn
+                      size="sm"
+                      color="secondary"
+                      onClick={() => {
+                        handleLastPage();
+                        window.scrollTo({ top: 0, behavior: "smooth" });
+                      }}
+                    >
+                      <FaAngleDoubleRight />
+                    </MDBBtn>
+                  </div>
+                )}
 
               </MDBCardBody>
             </MDBCard>
@@ -249,8 +265,8 @@ const AdminDashboard = () => {
         </MDBRow>
       </MDBContainer>
 
-     {/* Modal */}
-     <Modal
+      {/* Modal */}
+      <Modal
         isOpen={isModalOpen}
         onRequestClose={() => setIsModalOpen(false)}
         style={{

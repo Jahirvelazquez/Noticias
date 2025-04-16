@@ -14,9 +14,9 @@ const formatDate = (dateTimeString) => {
   });
 };
 
-const HCoahuila = () => {
-  const [nationalNews, setNationalNews] = useState([]);
-  const [loading, setLoading] = useState(true);
+const HNoticias = () => {
+    const [news, setNews] = useState([]);
+    const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const navigate = useNavigate();
   const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
@@ -27,6 +27,8 @@ const HCoahuila = () => {
       padding: '20px',
       fontFamily: 'Arial, sans-serif',
     },
+    
+    
     mainGrid: {
       display: 'flex',
       flexDirection: isMobile ? 'column' : 'row',
@@ -167,7 +169,6 @@ const HCoahuila = () => {
     },
   };
 
-
   useEffect(() => {
     const handleResize = () => setIsMobile(window.innerWidth < 768);
     window.addEventListener("resize", handleResize);
@@ -181,8 +182,10 @@ const HCoahuila = () => {
     onValue(newsRef, (snapshot) => {
       const data = snapshot.val();
       if (data) {
-        const newsArray = Object.entries(data).map(([id, value]) => ({ id, ...value }));
-        setNationalNews(newsArray.filter(news => news.category === "NACIONAL"));
+        const newsArray = Object.entries(data)
+          .map(([id, value]) => ({ id, ...value }))
+          .sort((a, b) => new Date(b.dateTime) - new Date(a.dateTime)); // Ordena las noticias por fecha
+        setNews(newsArray); // Guarda todas las noticias, sin filtrarlas por categoría
         setLoading(false);
       } else {
         setError('No data available');
@@ -193,6 +196,7 @@ const HCoahuila = () => {
       setLoading(false);
     });
   }, []);
+
   const CustomPrevArrow = ({ onClick }) => (
     <div
       onClick={onClick}
@@ -254,9 +258,15 @@ const HCoahuila = () => {
 
   if (loading) return <div>Loading...</div>;
   if (error) return <div>Error: {error}</div>;
-  return (
-    <div style={styles.container}>
-      <div style={{ position: 'relative', marginBottom: '30px' }}>
+  // Función para obtener la miniatura del video de YouTube
+const getYouTubeThumbnail = (url) => {
+  const videoIdMatch = url.match(/(?:youtu\.be\/|youtube\.com\/(?:watch\?v=|embed\/|v\/))([\w-]+)/);
+  return videoIdMatch ? `https://img.youtube.com/vi/${videoIdMatch[1]}/hqdefault.jpg` : null;
+};
+
+return (
+  <div style={styles.container}>
+    <div style={{ position: 'relative', marginBottom: '30px' }}>
         <div style={{
           backgroundColor: '#0056e0',
           color: 'white',
@@ -268,7 +278,7 @@ const HCoahuila = () => {
           position: 'relative',
           zIndex: 2
         }}>
-          COAHUILA
+          NOTICIAS
         </div>
         <div style={{
           position: 'absolute',
@@ -280,21 +290,58 @@ const HCoahuila = () => {
           zIndex: 1
         }}></div>
       </div>
-  
-      {/* Contenedor principal con orden invertido */}
-      <div style={{ 
-        ...styles.mainGrid, 
-        ...responsiveStyles.mainGrid, 
-      }}>
-        
-        {/* Carrusel ahora a la izquierda */}
-        {nationalNews.length > 0 && (
-          <div style={styles.carouselContainer}>
-            <Slider {...settings}>
-              {nationalNews.slice(0, 5).map((news, index) => (
+
+    <div style={{ ...styles.mainGrid, ...responsiveStyles.mainGrid }}>
+      {/* Cards a la izquierda ahora */}
+      <div style={styles.sideNews}>
+        {news.slice(1, 6).map((newsItem, index) => {
+          // Obtener la miniatura si hay un video
+          const videoUrl = newsItem.videoUrls?.[0]; // Suponiendo que solo haya un video
+          const thumbnail = videoUrl ? getYouTubeThumbnail(videoUrl) : newsItem.fileUrls?.[0] || '/path/to/default-thumbnail.jpg';
+
+          return (
+            <div
+              key={index}
+              style={{
+                ...styles.newsCard,
+                cursor: 'pointer',
+              }}
+              onClick={() => navigate(`/news/${newsItem.id}`)}
+              onMouseEnter={(e) =>
+                (e.currentTarget.style.transform = 'scale(1.05)')
+              }
+              onMouseLeave={(e) =>
+                (e.currentTarget.style.transform = 'scale(1)')
+              }
+            >
+              <img
+                src={thumbnail}
+                alt="Thumbnail"
+                style={styles.thumbnail}
+              />
+              <div style={styles.newsInfo}>
+                <div style={styles.tag}>{newsItem.category}</div>
+                <div style={styles.newsTitle}>{newsItem.title}</div>
+                <div style={styles.newsDate}>⏰ {formatDate(newsItem.dateTime)}</div>
+              </div>
+            </div>
+          );
+        })}
+      </div>
+
+      {/* Carrusel ahora a la derecha */}
+      {news.length > 0 && (
+        <div style={styles.carouselContainer}>
+          <Slider {...settings}>
+            {news.slice(0, 5).map((newsItem, index) => {
+              // Obtener la miniatura si hay un video
+              const videoUrl = newsItem.videoUrls?.[0]; // Suponiendo que solo haya un video
+              const thumbnail = videoUrl ? getYouTubeThumbnail(videoUrl) : newsItem.fileUrls?.[0] || '/path/to/default-image.jpg';
+
+              return (
                 <div
                   key={index}
-                  onClick={() => navigate(`/news/${news.id}`)}
+                  onClick={() => navigate(`/news/${newsItem.id}`)}
                   style={{
                     width: '100%',
                     height: '100%',
@@ -304,11 +351,11 @@ const HCoahuila = () => {
                   }}
                 >
                   <img
-                    src={news.fileUrls?.[0] || '/path/to/default-image.jpg'}
+                    src={thumbnail}
                     alt="Main news"
                     style={styles.carouselImage}
                   />
-  
+
                   <div
                     style={{
                       position: 'absolute',
@@ -325,51 +372,21 @@ const HCoahuila = () => {
                       maxWidth: '90%',
                     }}
                   >
-                    {news.title}
+                    {newsItem.title}
                   </div>
                 </div>
-              ))}
-            </Slider>
-          </div>
-        )}
-  
-        {/* Cards ahora a la derecha */}
-        <div style={styles.sideNews}>
-          {nationalNews.slice(1, 6).map((news, index) => (
-            <div
-              key={index}
-              style={{
-                ...styles.newsCard,
-                cursor: 'pointer',
-              }}
-              onClick={() => navigate(`/news/${news.id}`)}
-              onMouseEnter={(e) =>
-                (e.currentTarget.style.transform = 'scale(1.05)')
-              }
-              onMouseLeave={(e) =>
-                (e.currentTarget.style.transform = 'scale(1)')
-              }
-            >
-              <img
-                src={news.fileUrls?.[0] || '/path/to/default-thumbnail.jpg'}
-                alt="Thumbnail"
-                style={styles.thumbnail}
-              />
-              <div style={styles.newsInfo}>
-                <div style={styles.tag}>{news.category}</div>
-                <div style={styles.newsTitle}>{news.title}</div>
-                <div style={styles.newsDate}>⏰ {formatDate(news.dateTime)}</div>
-              </div>
-            </div>
-          ))}
+              );
+            })}
+          </Slider>
         </div>
-      </div>
+      )}
     </div>
-  );
+  </div>
+);
 
 
 };
 
-export default HCoahuila;
+export default HNoticias;
 
 

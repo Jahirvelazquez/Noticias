@@ -95,7 +95,7 @@ const BarraNavegacion = () => {
 
                 <ul className="navbar-nav text-center">
                   <li className="nav-item">
-                    <Link to="/San-pedro" className="nav-link text-light">San Pedro</Link>
+                    <Link to="/San pedro" className="nav-link text-light">San Pedro</Link>
                   </li>
                   <li className="nav-item">
                     <Link to="/Parras" className="nav-link text-light">Parras</Link>

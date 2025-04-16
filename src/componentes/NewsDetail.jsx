@@ -1,6 +1,6 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef  } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { database, db  } from '../firebaseConfig';
+import { database, db } from '../firebaseConfig';
 import { ref, onValue, update } from 'firebase/database';
 import {
     MDBContainer,
@@ -23,10 +23,21 @@ const NewsDetail = ({ currentCategory, currentNewsId }) => {
     const [newComment, setNewComment] = useState({ name: '', email: '', content: '' });
     const navigate = useNavigate();
     const [relatedNews, setRelatedNews] = useState([]);
-
+    const hasScrolledRef = useRef(false); // referencia para evitar múltiples scrolls
+    
     useEffect(() => {
-        if (!id) return;
+        hasScrolledRef.current = false; // ← reinicia scroll al cambiar id
+    }, [id]);
+    
+    useEffect(() => {
+        // Scroll solo la primera vez que el componente carga con un id válido
+        if (!hasScrolledRef.current && id) {
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+            hasScrolledRef.current = true;
+        }
 
+        if (!id) return;
+        
         // Obtener detalles de la noticia actual
         const newsRef = ref(database, `news/${id}`);
         onValue(newsRef, (snapshot) => {
@@ -47,17 +58,23 @@ const NewsDetail = ({ currentCategory, currentNewsId }) => {
 
                 // Filtrar noticias relacionadas por categoría y excluir la actual
                 if (newsItem?.category) {
-                    const filteredNews = newsArray.filter(
-                        (news) =>
-                            news.category.toLowerCase() === newsItem.category.toLowerCase() &&
-                            news.id !== id
+                    // Asegúrate de que newsItem.category sea un arreglo
+                    const categories = Array.isArray(newsItem.category) ? newsItem.category : [newsItem.category];
+
+                    // Filtrar noticias relacionadas que tengan la misma categoría
+                    const filteredNews = newsArray.filter((news) =>
+                        categories.some(category =>
+                            (Array.isArray(news.category) ? news.category : [news.category])
+                                .some(cat => cat.toLowerCase() === category.toLowerCase())
+                        ) && news.id !== id
                     );
                     setRelatedNews(filteredNews.slice(0, 3)); // Mostrar solo 3 noticias relacionadas
                 }
             }
         });
     }, [id, newsItem?.category]);
-    
+
+
 
     const handleInputChange = (e) => {
         const { name, value } = e.target;
@@ -101,13 +118,6 @@ const NewsDetail = ({ currentCategory, currentNewsId }) => {
             <MDBRow>
                 <MDBCol md="8" className="mx-auto">
                     <MDBCard className="shadow-3">
-                        {/* Imagen principal */}
-                        <MDBCardImage
-                            src={newsItem.fileUrls?.[0] || 'https://via.placeholder.com/800x400'}
-                            position="top"
-                            alt="News"
-                            className="rounded-top"
-                        />
 
                         {/* Contenido */}
                         <MDBCardBody>
@@ -119,8 +129,19 @@ const NewsDetail = ({ currentCategory, currentNewsId }) => {
                                 <MDBIcon far icon="calendar-alt" className="me-2" />
                                 {newsItem.dateTime ? new Date(newsItem.dateTime).toLocaleString() : 'Fecha no disponible'}
                                 <span className="mx-3">|</span>
-                                <MDBIcon fas icon="tag" className="me-2" /> {newsItem.category}
+
+                                <MDBIcon fas icon="tag" className="me-2" />
+                                {newsItem.category && Array.isArray(newsItem.category) ? (
+                                    newsItem.category.map((category, index) => (
+                                        <span key={index}>
+                                            {category} {index < newsItem.category.length - 1 ? '|' : ''}
+                                        </span>
+                                    ))
+                                ) : (
+                                    <span>{newsItem.category}</span>
+                                )}
                             </MDBCardText>
+
 
                             <MDBCardText className="mb-4" style={{ lineHeight: '1.6' }}>
                                 {newsItem.content}
@@ -172,44 +193,44 @@ const NewsDetail = ({ currentCategory, currentNewsId }) => {
                     </MDBCard>
 
                     {/* Noticias relacionadas */}
-<div className="related-news mt-5">
-    <MDBTypography tag="h3" className="fw-bold mb-4">
-        Noticias relacionadas
-    </MDBTypography>
-    <MDBRow>
-        {relatedNews.length > 0 ? (
-            relatedNews.map((news) => (
-                <MDBCol md="4" key={news.id}>
-                    <MDBCard className="shadow-sm">
-                        <MDBCardImage
-                            src={news.fileUrls?.[0] || "https://via.placeholder.com/300x200"}
-                            alt={news.title}
-                            className="rounded-top"
-                            style={{
-                                width: '100%',  // Asegura que la imagen ocupe el 100% del espacio disponible en el contenedor
-                                height: '200px', // Fija una altura fija para todas las imágenes
-                                objectFit: 'cover', // Asegura que la imagen mantenga su proporción sin distorsión, cubriendo el área asignada
-                            }}
-                        />
-                        <MDBCardBody>
-                            <MDBTypography tag="h5" className="fw-bold">
-                                {news.title}
-                            </MDBTypography>
-                            <MDBCardText className="text-muted">
-                                {news.content.slice(0, 100)}...
-                            </MDBCardText>
-                            <MDBBtn size="sm" onClick={() => navigate(`/news/${news.id}`)}>
-                                Leer más
-                            </MDBBtn>
-                        </MDBCardBody>
-                    </MDBCard>
-                </MDBCol>
-            ))
-        ) : (
-            <p>No hay noticias relacionadas disponibles.</p>
-        )}
-    </MDBRow>
-</div>
+                    <div className="related-news mt-5">
+                        <MDBTypography tag="h3" className="fw-bold mb-4">
+                            Noticias relacionadas
+                        </MDBTypography>
+                        <MDBRow>
+                            {relatedNews.length > 0 ? (
+                                relatedNews.map((news) => (
+                                    <MDBCol md="4" key={news.id}>
+                                        <MDBCard className="shadow-sm">
+                                            <MDBCardImage
+                                                src={news.fileUrls?.[0] || "https://via.placeholder.com/300x200"}
+                                                alt={news.title}
+                                                className="rounded-top"
+                                                style={{
+                                                    width: '100%',  // Asegura que la imagen ocupe el 100% del espacio disponible en el contenedor
+                                                    height: '200px', // Fija una altura fija para todas las imágenes
+                                                    objectFit: 'cover', // Asegura que la imagen mantenga su proporción sin distorsión, cubriendo el área asignada
+                                                }}
+                                            />
+                                            <MDBCardBody>
+                                                <MDBTypography tag="h5" className="fw-bold">
+                                                    {news.title}
+                                                </MDBTypography>
+                                                <MDBCardText className="text-muted">
+                                                    {news.content.slice(0, 100)}...
+                                                </MDBCardText>
+                                                <MDBBtn size="sm" onClick={() => navigate(`/news/${news.id}`)}>
+                                                    Leer más
+                                                </MDBBtn>
+                                            </MDBCardBody>
+                                        </MDBCard>
+                                    </MDBCol>
+                                ))
+                            ) : (
+                                <p>No hay noticias relacionadas disponibles.</p>
+                            )}
+                        </MDBRow>
+                    </div>
 
 
                     {/* Sección de comentarios */}
