@@ -27,7 +27,6 @@ const Inicio = () => {
       <HNoticias></HNoticias>
       <LatestArticles></LatestArticles>  
       <HNacional></HNacional>
-
       <CardVideo></CardVideo>
       <HLalaguna></HLalaguna>
       <Publicidad></Publicidad>

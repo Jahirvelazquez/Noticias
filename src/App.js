@@ -22,6 +22,7 @@ import NewsDashboard from "./componentes/Inicio/NewsDashboard";
 import SubirNoticia from "./componentes/SubirNoticia";
 import AdminPublicidad from "./componentes/AdminPublicidad";
 import AdminCarrusel from "./componentes/AdminCarrusel";
+import ProtectedRoute from './componentes/ProtectedRoute';
 
 function App() {
   return (
@@ -34,19 +35,23 @@ function App() {
           <Route path="/Coahuila" element={<Coahuila />} />
           <Route path="/Laguna" element={<LaLaguna />} />
           <Route path="/Nacional" element={<Nacional />} />
-          <Route path="/San pedro" element={<SanPedro />} />
+          <Route path="/Sanpedro" element={<SanPedro />} />
           <Route path="/Parras" element={<Parras />} />
           <Route path="/FcoIMadero" element={<FcoIMadero />} />
           <Route path="/Matamoros" element={<Matamoros />} />
           <Route path="/Contacto" element={<Contacto />} />
           <Route path="/news/:id" element={<NewsDetail />} />{/* Ruta para la noticia individual */}
-          <Route path="/administrador" element={<Administrador />} />
           <Route path="/resultados" element={<ResultadosBusqueda />} />
-          <Route path="/SubirNoticia" element={<SubirNoticia />} />
           <Route path="/Login" element={<Login />} />
           <Route path="/Login" element={<NewsDashboard />} />
+
+          {/* Rutas protegidas */}
+          <Route path="/administrador" element={<ProtectedRoute><Administrador /></ProtectedRoute>} />
           <Route path="/admin/publicidad" element={<AdminPublicidad />} />
           <Route path="/admin/carrusel" element={<AdminCarrusel />} />
+          <Route path="/SubirNoticia" element={<SubirNoticia />} />
+
+          <Route path="/SubirNoticia" element={<SubirNoticia />} />
         </Routes>
         <PiePagina />
       </BrowserRouter>

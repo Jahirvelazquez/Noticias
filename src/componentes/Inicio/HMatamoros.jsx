@@ -136,6 +136,7 @@ const HMatamoros = () => {
       margin: '0 auto',
       height: isMobile ? '250px' : '400px',
       overflow: 'visible',
+      marginBottom: isMobile ? '220px' : '0px',
     },
 
     carouselImage: {

@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useRef  } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { database, db } from '../firebaseConfig';
 import { ref, onValue, update } from 'firebase/database';
@@ -24,11 +24,30 @@ const NewsDetail = ({ currentCategory, currentNewsId }) => {
     const navigate = useNavigate();
     const [relatedNews, setRelatedNews] = useState([]);
     const hasScrolledRef = useRef(false); // referencia para evitar múltiples scrolls
-    
+    const [showShareModal, setShowShareModal] = useState(false);
+    const currentUrl = window.location.href;
+    const [showCopiedToast, setShowCopiedToast] = useState(false);
+
+    const shareOptions = {
+        facebook: `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(currentUrl)}`,
+        twitter: `https://twitter.com/intent/tweet?url=${encodeURIComponent(currentUrl)}`,
+        whatsapp: `https://api.whatsapp.com/send?text=${encodeURIComponent(currentUrl)}`,
+        telegram: `https://t.me/share/url?url=${encodeURIComponent(currentUrl)}`,
+    };
+
+    const handleCopyLink = () => {
+        navigator.clipboard.writeText(currentUrl).then(() => {
+            setShowCopiedToast(true);
+            setTimeout(() => {
+                setShowCopiedToast(false);
+            }, 2000); // desaparece después de 2 segundos
+        });
+    };
+
     useEffect(() => {
         hasScrolledRef.current = false; // ← reinicia scroll al cambiar id
     }, [id]);
-    
+
     useEffect(() => {
         // Scroll solo la primera vez que el componente carga con un id válido
         if (!hasScrolledRef.current && id) {
@@ -37,7 +56,7 @@ const NewsDetail = ({ currentCategory, currentNewsId }) => {
         }
 
         if (!id) return;
-        
+
         // Obtener detalles de la noticia actual
         const newsRef = ref(database, `news/${id}`);
         onValue(newsRef, (snapshot) => {
@@ -172,23 +191,57 @@ const NewsDetail = ({ currentCategory, currentNewsId }) => {
                             {/* Botones sociales */}
                             <div className="d-flex justify-content-between align-items-center mt-4">
                                 <div>
-                                    <MDBBtn tag="a" floating color="primary" className="me-2">
+                                    {/* Facebook */}
+                                    <MDBBtn
+                                        tag="a"
+                                        floating
+                                        color="primary"
+                                        className="me-2"
+                                        href={`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(window.location.href)}`}
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                    >
                                         <MDBIcon fab icon="facebook-f" />
                                     </MDBBtn>
-                                    <MDBBtn tag="a" floating color="info" className="me-2">
+
+                                    {/* Twitter */}
+                                    <MDBBtn
+                                        tag="a"
+                                        floating
+                                        color="info"
+                                        className="me-2"
+                                        href={`https://twitter.com/intent/tweet?url=${encodeURIComponent(window.location.href)}&text=${encodeURIComponent(newsItem.title)}`}
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                    >
                                         <MDBIcon fab icon="twitter" />
                                     </MDBBtn>
-                                    <MDBBtn tag="a" floating color="danger" className="me-2">
+
+                                    {/* Instagram (No se puede compartir directo, redirige a Instagram) */}
+                                    <MDBBtn
+                                        tag="a"
+                                        floating
+                                        color="danger"
+                                        className="me-2"
+                                        href="https://www.instagram.com/"
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                    >
                                         <MDBIcon fab icon="instagram" />
                                     </MDBBtn>
-                                    <MDBBtn tag="a" floating color="success">
+
+                                    {/* Copiar enlace */}
+                                    <MDBBtn floating color="success" onClick={() => setShowShareModal(true)}>
                                         <MDBIcon fas icon="share-alt" />
                                     </MDBBtn>
+
                                 </div>
+
                                 <MDBBtn color="dark" onClick={() => navigate(-1)}>
                                     <MDBIcon fas icon="arrow-left" className="me-2" /> Regresar
                                 </MDBBtn>
                             </div>
+
                         </MDBCardBody>
                     </MDBCard>
 
@@ -231,8 +284,78 @@ const NewsDetail = ({ currentCategory, currentNewsId }) => {
                             )}
                         </MDBRow>
                     </div>
-
-
+                    {showCopiedToast && (
+                        <div
+                            style={{
+                                position: 'fixed',
+                                bottom: '30px',
+                                left: '50%',
+                                transform: 'translateX(-50%)',
+                                backgroundColor: '#323232',
+                                color: '#fff',
+                                padding: '10px 20px',
+                                borderRadius: '5px',
+                                boxShadow: '0 0 10px rgba(0,0,0,0.3)',
+                                zIndex: 10000
+                            }}
+                        >
+                            Enlace copiado
+                        </div>
+                    )}
+                    {showShareModal && (
+                        <div
+                            style={{
+                                position: 'fixed',
+                                top: 0,
+                                left: 0,
+                                width: '100vw',
+                                height: '100vh',
+                                backgroundColor: 'rgba(0, 0, 0, 0.5)',
+                                display: 'flex',
+                                alignItems: 'center',
+                                justifyContent: 'center',
+                                zIndex: 9999
+                            }}
+                            onClick={() => setShowShareModal(false)}
+                        >
+                            <div
+                                onClick={(e) => e.stopPropagation()}
+                                style={{
+                                    backgroundColor: '#fff',
+                                    padding: '30px',
+                                    borderRadius: '10px',
+                                    width: '90%',
+                                    maxWidth: '500px',
+                                    textAlign: 'center'
+                                }}
+                            >
+                                <h4>Compartir esta noticia</h4>
+                                <MDBInput
+                                    value={currentUrl}
+                                    readOnly
+                                    className="my-3"
+                                    onClick={handleCopyLink}
+                                />
+                                <div className="d-flex justify-content-around mt-3 mb-3">
+                                    <a href={shareOptions.facebook} target="_blank" rel="noopener noreferrer">
+                                        <MDBIcon fab icon="facebook" size="2x" />
+                                    </a>
+                                    <a href={shareOptions.twitter} target="_blank" rel="noopener noreferrer">
+                                        <MDBIcon fab icon="x-twitter" size="2x" />
+                                    </a>
+                                    <a href={shareOptions.whatsapp} target="_blank" rel="noopener noreferrer">
+                                        <MDBIcon fab icon="whatsapp" size="2x" />
+                                    </a>
+                                    <a href={shareOptions.telegram} target="_blank" rel="noopener noreferrer">
+                                        <MDBIcon fab icon="telegram" size="2x" />
+                                    </a>
+                                </div>
+                                <MDBBtn color="secondary" onClick={() => setShowShareModal(false)}>
+                                    Cerrar
+                                </MDBBtn>
+                            </div>
+                        </div>
+                    )}
                     {/* Sección de comentarios */}
                     <hr />
                     <h4>Deja tu comentario</h4>

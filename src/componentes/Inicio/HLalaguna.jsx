@@ -136,6 +136,7 @@ const HLalaguna = () => {
       margin: '0 auto',
       height: isMobile ? '250px' : '400px',
       overflow: 'visible',
+      marginBottom: isMobile ? '220px' : '0px',
     },
 
     carouselImage: {
@@ -187,7 +188,7 @@ const HLalaguna = () => {
         // Ordenar las noticias por fecha descendente (más reciente primero)
         const newsArray = Object.entries(data)
           .map(([id, value]) => ({ id, ...value }))
-          .filter(news => news.category === "NACIONAL")  // Filtrar por categoría
+          .filter(news => news.category === "lalaguna")  // Filtrar por categoría
           .sort((a, b) => new Date(b.dateTime) - new Date(a.dateTime));  // Ordenar por fecha
   
         // Tomar solo las primeras 15 noticias

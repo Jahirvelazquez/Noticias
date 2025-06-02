@@ -134,20 +134,19 @@ const HNacional = () => {
       margin: '0 auto',
       height: isMobile ? '250px' : '400px',
       overflow: 'visible',
+      marginBottom: isMobile ? '220px' : '0px',
     },
+    
 
     carouselImage: {
       width: '800px',
       height: '450px',
-      objectFit: 'cover', // O "contain" si no quieres recortes
+      objectFit: 'cover', // O "contain" si no quieres recort es
       display: 'block',
       margin: '0 auto', // Centra la imagen si el contenedor es más grande
       borderRadius: '8px', // Opcional: bordes suaves
       cursor: 'pointer',
-
     },
-
-
   };
 
   const responsiveStyles = {

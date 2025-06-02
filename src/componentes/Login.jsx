@@ -1,15 +1,36 @@
-import React from 'react';
-import {
-  MDBContainer,
-  MDBRow,
-  MDBCol,
-  MDBIcon,
-  MDBCheckbox,
-  MDBInput,
-  MDBBtn,
-} from 'mdb-react-ui-kit';
+import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { getAuth, signInWithEmailAndPassword, onAuthStateChanged } from 'firebase/auth';
+import { MDBContainer, MDBRow, MDBCol, MDBInput, MDBBtn } from 'mdb-react-ui-kit';
 
-const  Login = () => {
+const Login = () => {
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const auth = getAuth();
+  const navigate = useNavigate();
+
+  // Redirigir a la página de administrador si el usuario ya está autenticado
+  useEffect(() => {
+    const unsubscribe = onAuthStateChanged(auth, (user) => {
+      if (user) {
+        navigate("/administrador");
+      }
+    });
+    return unsubscribe;
+  }, [auth, navigate]);
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    try {
+      await signInWithEmailAndPassword(auth, email, password);
+      alert('Inicio de sesión exitoso ✅');
+      navigate('/administrador');
+    } catch (error) {
+      console.error(error);
+      alert('Error al iniciar sesión: ' + error.message);
+    }
+  };
+
   return (
     <MDBContainer fluid className='mt-5'>
       <section className='text-center text-lg-start'>
@@ -21,48 +42,27 @@ const  Login = () => {
                 style={{ background: 'hsla(0, 0%, 100%, 0.55)', backdropFilter: 'blur(30px)' }}
               >
                 <div className='card-body p-5 shadow-5 text-center'>
-                  <h2 className='fw-bold mb-5'>Sign up now</h2>
-                  <form>
-                    <MDBRow className='mb-4'>
-                      <MDBCol>
-                        <MDBInput className='mb-4' id='first2' label='First name' />
-                      </MDBCol>
-                      <MDBCol>
-                        <MDBInput className='mb-4' id='last2' label='Last name' />
-                      </MDBCol>
-                    </MDBRow>
-
-                    <MDBInput className='mb-4' type='email' id='email2' label='Email address' />
-                    <MDBInput className='mb-4' type='password' id='password2' label='Password' />
-
-                    <MDBRow className='mb-4 justify-content-center'>
-                      <MDBCol md='6' className='d-flex justify-content-center'>
-                        <MDBCheckbox className=' mb-3 mb-md-0' defaultChecked label=' Subscribe to our newsletter' />
-                      </MDBCol>
-                    </MDBRow>
-
+                  <h2 className='fw-bold mb-5'>Login</h2>
+                  <form onSubmit={handleSubmit}>
+                    <MDBInput
+                      className='mb-4'
+                      type='email'
+                      label='Email'
+                      value={email}
+                      onChange={(e) => setEmail(e.target.value)}
+                      required
+                    />
+                    <MDBInput
+                      className='mb-4'
+                      type='password'
+                      label='Password'
+                      value={password}
+                      onChange={(e) => setPassword(e.target.value)}
+                      required
+                    />
                     <MDBBtn type='submit' block className='mb-4'>
-                      Sign up
+                      Login
                     </MDBBtn>
-
-                    <div className='text-center'>
-                      <p>or sign up with:</p>
-                      <MDBBtn color='link' type='button' floating className='mx-1'>
-                        <MDBIcon fab icon='facebook-f' />
-                      </MDBBtn>
-
-                      <MDBBtn color='link' type='button' floating className='mx-1'>
-                        <MDBIcon fab icon='google' />
-                      </MDBBtn>
-
-                      <MDBBtn color='link' type='button' floating className='mx-1'>
-                        <MDBIcon fab icon='twitter' />
-                      </MDBBtn>
-
-                      <MDBBtn color='link' type='button' floating className='mx-1'>
-                        <MDBIcon fab icon='github' />
-                      </MDBBtn>
-                    </div>
                   </form>
                 </div>
               </div>
@@ -72,7 +72,7 @@ const  Login = () => {
               <img
                 src='https://mdbootstrap.com/img/new/ecommerce/vertical/004.jpg'
                 className='w-100 rounded-4 shadow-4'
-                alt=''
+                alt='Login visual'
               />
             </MDBCol>
           </MDBRow>
@@ -80,6 +80,6 @@ const  Login = () => {
       </section>
     </MDBContainer>
   );
-}
+};
 
 export default Login;
