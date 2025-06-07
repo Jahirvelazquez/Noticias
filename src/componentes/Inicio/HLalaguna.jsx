@@ -16,6 +16,7 @@ const formatDate = (dateTimeString) => {
 
 const HLalaguna = () => {
   const [nationalNews, setNationalNews] = useState([]);
+  const currentCategory = "La Laguna";
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const navigate = useNavigate();
@@ -27,8 +28,8 @@ const HLalaguna = () => {
       padding: '20px',
       fontFamily: 'Arial, sans-serif',
     },
-    
-    
+
+
     mainGrid: {
       display: 'flex',
       flexDirection: isMobile ? 'column' : 'row',
@@ -180,18 +181,15 @@ const HLalaguna = () => {
   useEffect(() => {
     const db = getDatabase();
     const newsRef = ref(db, 'news');
-  
-    // Cambiar el `onValue` para ordenar y limitar los resultados
+
     onValue(newsRef, (snapshot) => {
       const data = snapshot.val();
       if (data) {
-        // Ordenar las noticias por fecha descendente (más reciente primero)
         const newsArray = Object.entries(data)
           .map(([id, value]) => ({ id, ...value }))
-          .filter(news => news.category === "lalaguna")  // Filtrar por categoría
-          .sort((a, b) => new Date(b.dateTime) - new Date(a.dateTime));  // Ordenar por fecha
-  
-        // Tomar solo las primeras 15 noticias
+          .filter(news => Array.isArray(news.category) && news.category.includes("La Laguna"))
+          .sort((a, b) => new Date(b.dateTime) - new Date(a.dateTime));
+
         setNationalNews(newsArray.slice(0, 15));
         setLoading(false);
       } else {
@@ -203,7 +201,8 @@ const HLalaguna = () => {
       setLoading(false);
     });
   }, []);
-  
+
+
   const CustomPrevArrow = ({ onClick }) => (
     <div
       onClick={onClick}
@@ -269,7 +268,7 @@ const HLalaguna = () => {
     const videoIdMatch = url.match(/(?:youtu\.be\/|youtube\.com\/(?:watch\?v=|embed\/|v\/))([\w-]+)/);
     return videoIdMatch ? `https://img.youtube.com/vi/${videoIdMatch[1]}/hqdefault.jpg` : null;
   };
-  
+
   return (
     <div style={styles.container}>
       <div style={{ position: 'relative', marginBottom: '30px' }}>
@@ -296,14 +295,14 @@ const HLalaguna = () => {
           zIndex: 1
         }}></div>
       </div>
-  
+
       <div style={{ ...styles.mainGrid, ...responsiveStyles.mainGrid }}>
         {/* Cards a la izquierda */}
         <div style={styles.sideNews}>
           {nationalNews.slice(1, 6).map((news, index) => {
             const videoUrl = news.videoUrls?.[0];
             const thumbnail = videoUrl ? getYouTubeThumbnail(videoUrl) : news.fileUrls?.[0] || '/path/to/default-thumbnail.jpg';
-  
+
             return (
               <div
                 key={index}
@@ -325,7 +324,11 @@ const HLalaguna = () => {
                   style={styles.thumbnail}
                 />
                 <div style={styles.newsInfo}>
-                  <div style={styles.tag}>{news.category}</div>
+                  <div style={styles.tag}>
+                    {Array.isArray(news.category)
+                      ? news.category.find(cat => cat.toLowerCase() === currentCategory.toLowerCase())
+                      : news.category}
+                  </div>
                   <div style={styles.newsTitle}>{news.title}</div>
                   <div style={styles.newsDate}>⏰ {formatDate(news.dateTime)}</div>
                 </div>
@@ -333,7 +336,7 @@ const HLalaguna = () => {
             );
           })}
         </div>
-  
+
         {/* Carrusel a la derecha */}
         {nationalNews.length > 0 && (
           <div style={styles.carouselContainer}>
@@ -341,7 +344,7 @@ const HLalaguna = () => {
               {nationalNews.slice(0, 5).map((news, index) => {
                 const videoUrl = news.videoUrls?.[0];
                 const thumbnail = videoUrl ? getYouTubeThumbnail(videoUrl) : news.fileUrls?.[0] || '/path/to/default-image.jpg';
-  
+
                 return (
                   <div
                     key={index}
@@ -386,7 +389,7 @@ const HLalaguna = () => {
       </div>
     </div>
   );
-  
+
 
 };
 

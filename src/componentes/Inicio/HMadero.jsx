@@ -16,6 +16,7 @@ const formatDate = (dateTimeString) => {
 
 const HMadero = () => {
   const [nationalNews, setNationalNews] = useState([]);
+  const currentCategory = "Fco.l.Madero";
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const navigate = useNavigate();
@@ -182,8 +183,12 @@ const HMadero = () => {
     onValue(newsRef, (snapshot) => {
       const data = snapshot.val();
       if (data) {
-        const newsArray = Object.entries(data).map(([id, value]) => ({ id, ...value }));
-        setNationalNews(newsArray.filter(news => news.category === "NACIONAL"));
+        const newsArray = Object.entries(data)
+          .map(([id, value]) => ({ id, ...value }))
+          .filter(news => Array.isArray(news.category) && news.category.includes("Fco.l.Madero"))
+          .sort((a, b) => new Date(b.dateTime) - new Date(a.dateTime));
+
+        setNationalNews(newsArray.slice(0, 15));
         setLoading(false);
       } else {
         setError('No data available');
@@ -194,6 +199,7 @@ const HMadero = () => {
       setLoading(false);
     });
   }, []);
+
   const CustomPrevArrow = ({ onClick }) => (
     <div
       onClick={onClick}
@@ -281,13 +287,13 @@ const HMadero = () => {
           zIndex: 1
         }}></div>
       </div>
-  
+
       {/* Contenedor principal con orden invertido */}
-      <div style={{ 
-        ...styles.mainGrid, 
-        ...responsiveStyles.mainGrid, 
+      <div style={{
+        ...styles.mainGrid,
+        ...responsiveStyles.mainGrid,
       }}>
-        
+
         {/* Carrusel ahora a la izquierda */}
         {nationalNews.length > 0 && (
           <div style={styles.carouselContainer}>
@@ -309,7 +315,7 @@ const HMadero = () => {
                     alt="Main news"
                     style={styles.carouselImage}
                   />
-  
+
                   <div
                     style={{
                       position: 'absolute',
@@ -333,7 +339,7 @@ const HMadero = () => {
             </Slider>
           </div>
         )}
-  
+
         {/* Cards ahora a la derecha */}
         <div style={styles.sideNews}>
           {nationalNews.slice(1, 6).map((news, index) => (
@@ -357,7 +363,11 @@ const HMadero = () => {
                 style={styles.thumbnail}
               />
               <div style={styles.newsInfo}>
-                <div style={styles.tag}>{news.category}</div>
+                <div style={styles.tag}>
+                  {Array.isArray(news.category)
+                    ? news.category.find(cat => cat.toLowerCase() === currentCategory.toLowerCase())
+                    : news.category}
+                </div>
                 <div style={styles.newsTitle}>{news.title}</div>
                 <div style={styles.newsDate}>⏰ {formatDate(news.dateTime)}</div>
               </div>

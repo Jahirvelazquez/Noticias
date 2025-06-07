@@ -55,8 +55,14 @@ export default function piePagina() {
                 <MDBIcon icon='building' className='me-2 text-danger' />
                 Empresa
               </h6>
-              <p href='https://lasnoticiascoahuila.com/' className='mb-0 fw-bold'>
-              Las Noticias Coahuila</p>
+              <img
+                style={{
+                  width: '170px',
+                  height: '170px',
+                }}
+                src="https://firebasestorage.googleapis.com/v0/b/imagenes-37984.appspot.com/o/logonoticias.jpg?alt=media&token=8cc7eddf-dbe9-4e2b-83a1-8504b977f3da"
+                alt="Logo"
+              />
 
             </MDBCol>
 

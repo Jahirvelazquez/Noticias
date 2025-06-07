@@ -27,19 +27,19 @@ const Contacto = () => {
           <MDBRow className='mb-5'>
             <MDBCol lg='3' md='6' className='mb-5 mb-lg-0 position-relative'>
               <MDBIcon icon='globe-americas' size='3x' className='text-primary mb-4' />
-              <h6 className='fw-normal mb-0'>Unites States</h6>
+              <h6 className='fw-normal mb-0'>Mexico</h6>
               <div className='vr vr-blurry position-absolute my-0 h-100 d-none d-md-block top-0 end-0'></div>
             </MDBCol>
 
             <MDBCol lg='3' md='6' className='mb-5 mb-lg-0 position-relative'>
               <MDBIcon icon='map-marker-alt' size='3x' className='text-primary mb-4' />
-              <h6 className='fw-normal mb-0'>New York, 94126</h6>
+              <h6 className='fw-normal mb-0'>San Pedro, 94126</h6>
               <div className='vr vr-blurry position-absolute my-0 h-100 d-none d-md-block top-0 end-0'></div>
             </MDBCol>
 
             <MDBCol lg='3' md='6' className='mb-4 mb-lg-0 position-relative'>
               <MDBIcon icon='phone' size='3x' className='text-primary mb-4' />
-              <h6 className='fw-normal mb-0'>+ 01 234 567 89</h6>
+              <h6 className='fw-normal mb-0'>+52 1 872 303 2225</h6>
               <div className='vr vr-blurry position-absolute my-0 h-100 d-none d-md-block top-0 end-0'></div>
             </MDBCol>
 

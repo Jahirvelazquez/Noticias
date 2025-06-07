@@ -16,6 +16,7 @@ const formatDate = (dateTimeString) => {
 
 const HNoticias = () => {
   const [nationalNews, setNationalNews] = useState([]);
+  const currentCategory = "Especiales";
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const navigate = useNavigate();
@@ -27,8 +28,8 @@ const HNoticias = () => {
       padding: '20px',
       fontFamily: 'Arial, sans-serif',
     },
-    
-    
+
+
     mainGrid: {
       display: 'flex',
       flexDirection: isMobile ? 'column' : 'row',
@@ -184,8 +185,12 @@ const HNoticias = () => {
     onValue(newsRef, (snapshot) => {
       const data = snapshot.val();
       if (data) {
-        const newsArray = Object.entries(data).map(([id, value]) => ({ id, ...value }));
-        setNationalNews(newsArray.filter(news => news.category === "NACIONAL"));
+        const newsArray = Object.entries(data)
+          .map(([id, value]) => ({ id, ...value }))
+          .filter(news => Array.isArray(news.category) && news.category.includes("Especiales"))
+          .sort((a, b) => new Date(b.dateTime) - new Date(a.dateTime));
+
+        setNationalNews(newsArray.slice(0, 15));
         setLoading(false);
       } else {
         setError('No data available');
@@ -196,6 +201,8 @@ const HNoticias = () => {
       setLoading(false);
     });
   }, []);
+
+
   const CustomPrevArrow = ({ onClick }) => (
     <div
       onClick={onClick}
@@ -257,116 +264,132 @@ const HNoticias = () => {
 
   if (loading) return <div>Loading...</div>;
   if (error) return <div>Error: {error}</div>;
+  const getYouTubeThumbnail = (url) => {
+    const videoIdMatch = url.match(/(?:youtu\.be\/|youtube\.com\/(?:watch\?v=|embed\/|v\/))([\w-]+)/);
+    return videoIdMatch ? `https://img.youtube.com/vi/${videoIdMatch[1]}/hqdefault.jpg` : null;
+  };
+
   return (
     <div style={styles.container}>
       <div style={{ position: 'relative', marginBottom: '30px' }}>
-  {/* Texto con fondo azul y triángulo más marcado */}
-  <div style={{
-    backgroundColor: '#0056e0',
-    color: 'white',
-    fontWeight: 'bold',
-    padding: '12px 25px',
-    display: 'inline-block',
-    clipPath: 'polygon(0 0, 85% 0, 100% 100%, 0% 100%)',
-    fontSize: '16px',
-    position: 'relative',
-    zIndex: 2
-  }}>
-    NOTICIAS
-  </div>
-
-  {/* Línea azul más abajo */}
-  <div style={{
-    position: 'absolute',
-    left: 0,
-    bottom: -5, // más abajo
-    width: '100%',
-    height: '3px',
-    backgroundColor: '#0056e0',
-    zIndex: 1
-  }}></div>
-</div>
+        <div style={{
+          backgroundColor: '#0056e0',
+          color: 'white',
+          fontWeight: 'bold',
+          padding: '12px 25px',
+          display: 'inline-block',
+          clipPath: 'polygon(0 0, 85% 0, 100% 100%, 0% 100%)',
+          fontSize: '16px',
+          position: 'relative',
+          zIndex: 2
+        }}>
+          NOTICIAS
+        </div>
+        <div style={{
+          position: 'absolute',
+          left: 0,
+          bottom: -5,
+          width: '100%',
+          height: '3px',
+          backgroundColor: '#0056e0',
+          zIndex: 1
+        }}></div>
+      </div>
 
       <div style={{ ...styles.mainGrid, ...responsiveStyles.mainGrid }}>
-        {/* Cards a la izquierda ahora */}
+        {/* Cards a la izquierda */}
         <div style={styles.sideNews}>
-          {nationalNews.slice(1, 6).map((news, index) => (
-            <div
-              key={index}
-              style={{
-                ...styles.newsCard,
-                cursor: 'pointer',
-              }}
-              onClick={() => navigate(`/news/${news.id}`)}
-              onMouseEnter={(e) =>
-                (e.currentTarget.style.transform = 'scale(1.05)')
-              }
-              onMouseLeave={(e) =>
-                (e.currentTarget.style.transform = 'scale(1)')
-              }
-            >
-              <img
-                src={news.fileUrls?.[0] || '/path/to/default-thumbnail.jpg'}
-                alt="Thumbnail"
-                style={styles.thumbnail}
-              />
-              <div style={styles.newsInfo}>
-                <div style={styles.tag}>{news.category}</div>
-                <div style={styles.newsTitle}>{news.title}</div>
-                <div style={styles.newsDate}>⏰ {formatDate(news.dateTime)}</div>
+          {nationalNews.slice(1, 6).map((news, index) => {
+            const videoUrl = news.videoUrls?.[0];
+            const thumbnail = videoUrl ? getYouTubeThumbnail(videoUrl) : news.fileUrls?.[0] || '/path/to/default-thumbnail.jpg';
+
+            return (
+              <div
+                key={index}
+                style={{
+                  ...styles.newsCard,
+                  cursor: 'pointer',
+                }}
+                onClick={() => navigate(`/news/${news.id}`)}
+                onMouseEnter={(e) =>
+                  (e.currentTarget.style.transform = 'scale(1.05)')
+                }
+                onMouseLeave={(e) =>
+                  (e.currentTarget.style.transform = 'scale(1)')
+                }
+              >
+                <img
+                  src={thumbnail}
+                  alt="Thumbnail"
+                  style={styles.thumbnail}
+                />
+                <div style={styles.newsInfo}>
+                  <div style={styles.tag}>
+                    {Array.isArray(news.category)
+                      ? news.category.find(cat => cat.toLowerCase() === currentCategory.toLowerCase())
+                      : news.category}
+                  </div>
+                  <div style={styles.newsTitle}>{news.title}</div>
+                  <div style={styles.newsDate}>⏰ {formatDate(news.dateTime)}</div>
+                </div>
               </div>
-            </div>
-          ))}
+            );
+          })}
         </div>
 
-        {/* Carrusel ahora a la derecha */}
+        {/* Carrusel a la derecha */}
         {nationalNews.length > 0 && (
           <div style={styles.carouselContainer}>
             <Slider {...settings}>
-              {nationalNews.slice(0, 5).map((news, index) => (
-                <div
-                  key={index}
-                  onClick={() => navigate(`/news/${news.id}`)}
-                  style={{
-                    width: '100%',
-                    height: '100%',
-                    overflow: 'hidden',
-                    position: 'relative',
-                    cursor: 'pointer',
-                  }}
-                >
-                  <img
-                    src={news.fileUrls?.[0] || '/path/to/default-image.jpg'}
-                    alt="Main news"
-                    style={styles.carouselImage}
-                  />
+              {nationalNews.slice(0, 5).map((news, index) => {
+                const videoUrl = news.videoUrls?.[0];
+                const thumbnail = videoUrl ? getYouTubeThumbnail(videoUrl) : news.fileUrls?.[0] || '/path/to/default-image.jpg';
 
+                return (
                   <div
+                    key={index}
+                    onClick={() => navigate(`/news/${news.id}`)}
                     style={{
-                      position: 'absolute',
-                      bottom: '20px',
-                      left: '20px',
-                      right: '20px',
-                      color: 'white',
-                      fontSize: '2rem',
-                      fontWeight: 'bold',
-                      textShadow: '2px 2px 4px rgba(0, 0, 0, 0.8)',
-                      background: 'rgba(0, 0, 0, 0.3)',
-                      padding: '10px 15px',
-                      borderRadius: '10px',
-                      maxWidth: '90%',
+                      width: '100%',
+                      height: '100%',
+                      overflow: 'hidden',
+                      position: 'relative',
+                      cursor: 'pointer',
                     }}
                   >
-                    {news.title}
+                    <img
+                      src={thumbnail}
+                      alt="Main news"
+                      style={styles.carouselImage}
+                    />
+                    <div
+                      style={{
+                        position: 'absolute',
+                        bottom: '20px',
+                        left: '20px',
+                        right: '20px',
+                        color: 'white',
+                        fontSize: '2rem',
+                        fontWeight: 'bold',
+                        textShadow: '2px 2px 4px rgba(0, 0, 0, 0.8)',
+                        background: 'rgba(0, 0, 0, 0.3)',
+                        padding: '10px 15px',
+                        borderRadius: '10px',
+                        maxWidth: '90%',
+                      }}
+                    >
+                      {news.title}
+                    </div>
                   </div>
-                </div>
-              ))}
+                );
+              })}
             </Slider>
           </div>
         )}
       </div>
     </div>
   );
+
 
 };
 

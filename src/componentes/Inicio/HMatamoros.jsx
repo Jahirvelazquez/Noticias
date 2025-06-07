@@ -16,6 +16,7 @@ const formatDate = (dateTimeString) => {
 
 const HMatamoros = () => {
   const [nationalNews, setNationalNews] = useState([]);
+  const currentCategory = "Matamoros";
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const navigate = useNavigate();
@@ -27,8 +28,8 @@ const HMatamoros = () => {
       padding: '20px',
       fontFamily: 'Arial, sans-serif',
     },
-    
-    
+
+
     mainGrid: {
       display: 'flex',
       flexDirection: isMobile ? 'column' : 'row',
@@ -184,8 +185,12 @@ const HMatamoros = () => {
     onValue(newsRef, (snapshot) => {
       const data = snapshot.val();
       if (data) {
-        const newsArray = Object.entries(data).map(([id, value]) => ({ id, ...value }));
-        setNationalNews(newsArray.filter(news => news.category === "NACIONAL"));
+        const newsArray = Object.entries(data)
+          .map(([id, value]) => ({ id, ...value }))
+          .filter(news => Array.isArray(news.category) && news.category.includes("Matamoros"))
+          .sort((a, b) => new Date(b.dateTime) - new Date(a.dateTime));
+
+        setNationalNews(newsArray.slice(0, 15));
         setLoading(false);
       } else {
         setError('No data available');
@@ -196,6 +201,7 @@ const HMatamoros = () => {
       setLoading(false);
     });
   }, []);
+
   const CustomPrevArrow = ({ onClick }) => (
     <div
       onClick={onClick}
@@ -260,32 +266,32 @@ const HMatamoros = () => {
   return (
     <div style={styles.container}>
       <div style={{ position: 'relative', marginBottom: '30px' }}>
-  {/* Texto con fondo azul y triángulo más marcado */}
-  <div style={{
-    backgroundColor: '#0056e0',
-    color: 'white',
-    fontWeight: 'bold',
-    padding: '12px 25px',
-    display: 'inline-block',
-    clipPath: 'polygon(0 0, 85% 0, 100% 100%, 0% 100%)',
-    fontSize: '16px',
-    position: 'relative',
-    zIndex: 2
-  }}>
-    COAHUILA
-  </div>
+        {/* Texto con fondo azul y triángulo más marcado */}
+        <div style={{
+          backgroundColor: '#0056e0',
+          color: 'white',
+          fontWeight: 'bold',
+          padding: '12px 25px',
+          display: 'inline-block',
+          clipPath: 'polygon(0 0, 85% 0, 100% 100%, 0% 100%)',
+          fontSize: '16px',
+          position: 'relative',
+          zIndex: 2
+        }}>
+          MATAMOROS
+        </div>
 
-  {/* Línea azul más abajo */}
-  <div style={{
-    position: 'absolute',
-    left: 0,
-    bottom: -5, // más abajo
-    width: '100%',
-    height: '3px',
-    backgroundColor: '#0056e0',
-    zIndex: 1
-  }}></div>
-</div>
+        {/* Línea azul más abajo */}
+        <div style={{
+          position: 'absolute',
+          left: 0,
+          bottom: -5, // más abajo
+          width: '100%',
+          height: '3px',
+          backgroundColor: '#0056e0',
+          zIndex: 1
+        }}></div>
+      </div>
 
       <div style={{ ...styles.mainGrid, ...responsiveStyles.mainGrid }}>
         {/* Cards a la izquierda ahora */}
@@ -311,7 +317,11 @@ const HMatamoros = () => {
                 style={styles.thumbnail}
               />
               <div style={styles.newsInfo}>
-                <div style={styles.tag}>{news.category}</div>
+                <div style={styles.tag}>
+                  {Array.isArray(news.category)
+                    ? news.category.find(cat => cat.toLowerCase() === currentCategory.toLowerCase())
+                    : news.category}
+                </div>
                 <div style={styles.newsTitle}>{news.title}</div>
                 <div style={styles.newsDate}>⏰ {formatDate(news.dateTime)}</div>
               </div>
