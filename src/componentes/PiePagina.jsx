@@ -22,7 +22,11 @@ export default function PiePagina() {
   };
 
   return (
-    <MDBFooter className='bg-light text-center text-lg-start text-muted'>
+    <MDBFooter
+  className='bg-light text-center text-lg-start text-muted'
+  style={{ marginTop: '60px' }}
+>
+
       {/* Sección de redes sociales */}
       <MDBContainer className='p-4'>
 
